@@ -1,0 +1,22 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.17.0",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.4.1"
+    },
+    "version": "1.16.1",
+    "libraryName": "sharepoint-forms",
+    "libraryId": "6f6bdc8a-5044-4789-8168-a6fb81fb9207",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "SharepointForms",
+    "solutionShortDescription": "SharepointForms description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "extension",
+    "extensionType": "FormCustomizer"
+  }
+}

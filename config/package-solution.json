@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "sharepoint-forms-client-side-solution",
+    "id": "6f6bdc8a-5044-4789-8168-a6fb81fb9207",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.16.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "SharepointForms description"
+      },
+      "longDescription": {
+        "default": "SharepointForms description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "sharepoint-forms Feature",
+        "description": "The feature that activates elements of the sharepoint-forms solution.",
+        "id": "418a7894-f37a-43e7-a808-90ac73d226e9",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/sharepoint-forms.sppkg"
+  }
+}
