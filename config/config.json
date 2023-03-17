@@ -5,14 +5,15 @@
     "form-templates-form-customizer": {
       "components": [
         {
-          "entrypoint": "./lib/extensions/formTemplates/FormTemplatesFormCustomizer.js",
-          "manifest": "./src/extensions/formTemplates/FormTemplatesFormCustomizer.manifest.json"
+          "entrypoint": "./lib/extensions/formTemplates/formTemplatesFormCustomizer.js",
+          "manifest": "./src/extensions/formTemplates/formTemplatesFormCustomizer.manifest.json"
         }
       ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "FormTemplatesFormCustomizerStrings": "lib/extensions/formTemplates/loc/{locale}.js"
+    "FormTemplatesFormCustomizerStrings": "lib/extensions/formTemplates/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }
