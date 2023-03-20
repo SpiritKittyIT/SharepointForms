@@ -61,7 +61,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     
     if (props.displayMode !== FormDisplayMode.New) {
       props.context.spHttpClient
-      .get(props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('${props.context.list.title}')/fieldsr?$select=Title,TypeAsString,TypeDisplayName,Choices$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
+      .get(props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('${props.context.list.title}')/fields?$select=Title,TypeAsString,TypeDisplayName,Choices$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
         headers: {
           accept: 'application/json;odata.metadata=none'
         }
