@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { FormDisplayMode } from '@microsoft/sp-core-library';
-import {
-  SPHttpClient
-} from '@microsoft/sp-http'
+import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 
 import { FC } from 'react';
 import Error from './error';
 import './formTemplates.module.css'
+import TextCard from './cards/textCard';
+import DropDownCard from './cards/dropdownCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -16,27 +16,27 @@ export interface IFormTemplatesProps {
   onClose: () => void;
 }
 
-export interface IColumn {
-  Title: string,
-  InternalName: string,
-  TypeAsString: string,
-  TypeDisplayName: string,
-  Choices?: [string],
-  LookupField?: string,
-  LookupList?: string,
-  LookupWebId?: string
-}
-
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   const [item, setItem] = React.useState<{[key: string]:string}>({})
-  const [cols, setCols] = React.useState<IColumn[]>([])
+  const [cols, setCols] = React.useState<IColProps[]>([])
   const [etag, setEtag] = React.useState<string>("")
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState("")
+
+  const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
+    let result: (IColProps | null) = null
+    cols.forEach(col => {
+      if (col.InternalName === colName) {
+        result = col
+      }
+    })
+    return result
+  }
 
   React.useEffect(() => {
     if (props.displayMode !== FormDisplayMode.New) {
       props.context.spHttpClient
-      .get(props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('${props.context.list.title}')/items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
+      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
         headers: {
           accept: 'application/json;odata.metadata=none'
         }
@@ -49,19 +49,22 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           return res.json();
         }
         else {
-          setShow(true)
           return Promise.reject(res.statusText);
         }
       })
       .then(body => {
         setItem(body)
         return Promise.resolve();
-      });
+      })
+      .catch(err => {
+        setShow(true)
+        console.error(err)
+      })
     }
     
     if (props.displayMode !== FormDisplayMode.New) {
       props.context.spHttpClient
-      .get(props.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('${props.context.list.title}')/fields?$select=Title,TypeAsString,TypeDisplayName,Choices$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
+      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
         headers: {
           accept: 'application/json;odata.metadata=none'
         }
@@ -71,17 +74,44 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           return res.json();
         }
         else {
-          setShow(true)
           return Promise.reject(res.statusText);
         }
       })
       .then(body => {
-        setCols(body)
-        console.log(cols)
+        setCols(body.value)
         return Promise.resolve();
-      });
+      })
+      .catch(err => {
+        setShow(true)
+        console.error(err)
+      })
     }
   }, [props])
+
+  const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
+    let valid = true
+    Object.keys(item).forEach(key => {
+      let skip = false;
+      ["FileSystemObjectType", "Id", "ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl", "ContentTypeId", "AuthorId", "EditorId", "OData__UIVersionString", "GUID"]
+      .forEach(col => {
+        if (key === col) {
+          skip = true;
+          return
+        }})
+      if (skip){return}
+
+      if (!getColProps(key, cols)){
+        valid = false
+        setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${key}`)
+      }
+    })
+    if (!valid){
+      setShow(true)
+      event.preventDefault()
+      return
+    }
+    props.onSave(item, etag)
+  }
 
   if (props.displayMode === FormDisplayMode.Display) {
     return (<div className="formTemplates">
@@ -90,33 +120,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       </div>
   )}
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setItem({
-      ...item,
-      [event.target.id]: event.target.value,
-    })
-    console.log(item)
-  }
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    props.onSave(item, etag)
-  }
-  
   return (
     <>
-      <Error show={show} setShow={setShow} />
+      <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="Title">Title</label>
-          <input
-            id="Title"
-            type="text"
-            value={item["Title"]}
-            onChange={handleChange}
-          />
-        </div>
+        <TextCard id="Title" colProps={getColProps("Title", cols)} itemHandle={{value: item, setValue: setItem}} />
+        <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} itemHandle={{value: item, setValue: setItem}} />
         <button type="submit">Save</button>
-        <button onClick={() => {props.onClose()}}>Close</button>
+        <button type="button" onClick={() => {props.onClose()}}>Close</button>
+        <button type="button" onClick={() => {
+          console.log(cols)
+          console.log(item)
+        }}>Test Info</button>
       </form>
     </>
   )

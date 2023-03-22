@@ -53,7 +53,7 @@ export default class FormTemplatesFormCustomizer
     // disable all input elements while we're saving the item
     this.domElement.querySelectorAll('input').forEach(el => el.setAttribute('disabled', 'disabled'));
   
-    let request: Promise<SPHttpClientResponse> = new Promise<SPHttpClientResponse>(() => {})
+    let request: Promise<SPHttpClientResponse> = new Promise<SPHttpClientResponse>(() => {return})
   
     switch (this.displayMode) {
       case FormDisplayMode.New:
