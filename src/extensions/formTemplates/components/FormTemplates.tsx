@@ -62,30 +62,28 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
     }
     
-    if (props.displayMode !== FormDisplayMode.New) {
-      props.context.spHttpClient
-      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
-        headers: {
-          accept: 'application/json;odata.metadata=none'
-        }
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        else {
-          return Promise.reject(res.statusText);
-        }
-      })
-      .then(body => {
-        setCols(body.value)
-        return Promise.resolve();
-      })
-      .catch(err => {
-        setShow(true)
-        console.error(err)
-      })
-    }
+    props.context.spHttpClient
+    .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
+      headers: {
+        accept: 'application/json;odata.metadata=none'
+      }
+    })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      else {
+        return Promise.reject(res.statusText);
+      }
+    })
+    .then(body => {
+      setCols(body.value)
+      return Promise.resolve();
+    })
+    .catch(err => {
+      setShow(true)
+      console.error(err)
+    })
   }, [props])
 
   const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
@@ -113,20 +111,13 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     props.onSave(item, etag)
   }
 
-  if (props.displayMode === FormDisplayMode.Display) {
-    return (<div className="formTemplates">
-        <label>title: {item["Title"]}</label>
-        <button onClick={() => {props.onClose()}}>Close</button>
-      </div>
-  )}
-
   return (
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form onSubmit={handleSubmit}>
-        <TextCard id="Title" colProps={getColProps("Title", cols)} itemHandle={{value: item, setValue: setItem}} />
-        <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} itemHandle={{value: item, setValue: setItem}} />
-        <button type="submit">Save</button>
+        <TextCard id="Title" colProps={getColProps("Title", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+        <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+        {props.displayMode !== FormDisplayMode.Display ? <button type="submit">Save</button> : <></>}
         <button type="button" onClick={() => {props.onClose()}}>Close</button>
         <button type="button" onClick={() => {
           console.log(cols)

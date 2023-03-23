@@ -46,9 +46,46 @@ Short summary on functionality and used technologies.
 - Ensure that you are at the solution folder
 - in the command-line run:
   - **npm install**
+  - **Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass**
   - **gulp serve**
 
 > Include any additional steps as needed.
+
+- node/npm versions
+  - to install new node modules:
+    - **npm install -g -node@19**
+    - **npm install -g npm@9**
+  - to run and deploy:
+    - **npm install -g -node@16**
+    - **npm install -g npm@6**
+
+- To deploy
+  - **gulp clean**
+  - **gulp build**
+  - **gulp bundle --ship**
+  - **gulp package-solution --ship**
+
+- To create app list for the site
+  - **Connect-SPOService -Url https://contoso-admin.sharepoint.com**
+  - **$site = Get-SPOSite https://contoso.sharepoint.com/sites/commssite**
+  - **Add-SPOSiteCollectionAppCatalog -Site $site**
+
+- App componentId: 05459ba7-ba24-45da-be05-9b686a07aa21
+- Content Type Id: 0x01009E2CD1BE58060F4D85FFD017C8B4A10100B627C45C54BBA148A4B94ADC574CC0D2
+- List Name: acLstMain | Id: 1d7b000f-dcd5-440d-ab2d-15da68c2e90b
+
+- To associate the app:
+  - If PnP not installed:
+    - **Install-Module PnP.PowerShell**
+    - **Register-PnPManagementShellAccess**
+  - **Connect-PnPOnline -Url https://contoso.sharepoint.com/sites/commssite**
+  - **$targetList = Get-PnPList -identity "1d7b000f-dcd5-440d-ab2d-15da68c2e90b"**
+  - **$targetContentType = get-PnPContentType -List $targetList -Identity "0x01009E2CD1BE58060F4D85FFD017C8B4A10100B627C45C54BBA148A4B94ADC574CC0D2"**
+  - **$targetContentType.DisplayFormClientSideComponentId = "05459ba7-ba24-45da-be05-9b686a07aa21"**
+  - **$targetContentType.NewFormClientSideComponentId = "05459ba7-ba24-45da-be05-9b686a07aa21"**
+  - **$targetContentType.EditFormClientSideComponentId = "05459ba7-ba24-45da-be05-9b686a07aa21"**
+  - **$targetContentType.Update($false)**
+  - **Invoke-PnPQuery**
 
 ## Features
 
