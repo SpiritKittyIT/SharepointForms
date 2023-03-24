@@ -20,7 +20,7 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
   return (
     <div className='card'>
       <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
-      <select id={id} onChange={onChange} disabled={displayMode === FormDisplayMode.Display}>
+      <select id={id} className='card-input' onChange={onChange} disabled={displayMode === FormDisplayMode.Display}>
         { itemHandle.value[id] === "" ? <option value="" selected /> : <option value="" /> }
         { colProps?.Choices?.map((choice) => choice === itemHandle.value[id] ? <option value={choice} selected>{choice}</option> : <option value={choice}>{choice}</option>) }
       </select>

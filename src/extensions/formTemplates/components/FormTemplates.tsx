@@ -129,11 +129,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form onSubmit={handleSubmit}>
-        <TextCard id="Title" colProps={getColProps("Title", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-        <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-        {props.displayMode !== FormDisplayMode.Display ? <button type="submit">Save</button> : <></>}
-        <button type="button" onClick={() => {props.onClose()}}>Close</button>
-        <button type="button" onClick={() => {
+        <div className='cards'>
+          <TextCard id="Title" colProps={getColProps("Title", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <TextCard id="acColNumber" colProps={getColProps("acColNumber", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <TextCard id="acColNumRange" colProps={getColProps("acColNumRange", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <TextCard id="acColNumPercent" colProps={getColProps("acColNumPercent", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <TextCard id="acColNumDecimal" colProps={getColProps("acColNumDecimal", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <TextCard id="acColCurrency" colProps={getColProps("acColCurrency", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+        </div>
+        {props.displayMode !== FormDisplayMode.Display ? <button type="submit" className='button button-green'>Save</button> : <></>}
+        <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
+        <button type="button" className='button button-blue' onClick={() => {
           console.log(cols)
           console.log(item)
         }}>Test Info</button>

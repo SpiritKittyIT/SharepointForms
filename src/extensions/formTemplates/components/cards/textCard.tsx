@@ -19,14 +19,14 @@ const TextCard: React.FC<ITextCard> = ({id, colProps, displayMode, itemHandle}) 
   return (
     <div className='card'>
       <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
-          <input
-            className='card-input'
-            id={id}
-            type="text"
-            value={itemHandle.value[id]}
-            onChange={onChange}
-            disabled={displayMode === FormDisplayMode.Display}
-          />
+      <input
+        className='card-input'
+        id={id}
+        type="text"
+        value={itemHandle.value[id]}
+        onChange={onChange}
+        disabled={displayMode === FormDisplayMode.Display}
+      />
     </div>
   )
 };

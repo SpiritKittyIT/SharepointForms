@@ -25,13 +25,92 @@
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
+.cards {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0.5rem;
+}
+
 .card {
   display: flex;
-  padding: 1rem;
-  flex-direction: column;
+  padding: 0.5rem;
+  flex-flow: column wrap;
+  width: 30%;
+  color: rgb(33, 33, 33);
+}
+
+.card-label {
+  font-weight: 500;
+  padding: 0.3rem 0;
+}
+
+.card-input {
+  padding: 0.3rem;
+  line-height: 1.2rem;
+  border: solid 1px rgb(118, 118, 118);
+  color: rgb(33, 33, 33);
 }
 
 .card-required:after {
   content:" *";
   color: red;
+}
+
+.button {
+  padding: 0.5rem 1.1rem;
+  margin: 0.5rem;
+  border: 0;
+  border-radius: 100px;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+
+.button:hover {
+  box-shadow: 0 0 1rem #6fc5ff50;
+}
+
+.button:active {
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+}
+
+.button-blue {
+  background-color: #2ba8fb;
+  color: #ffffff;
+}
+
+.button-blue:hover {
+  background-color: #6fc5ff;
+}
+
+.button-blue:active {
+  background-color: #3d94cf;
+}
+
+.button-red {
+  background-color: #f83868;
+  color: #ffffff;
+}
+
+.button-red:hover {
+  background-color: #fd507b;
+}
+
+.button-red:active {
+  background-color: #e92959;
+}
+
+.button-green {
+  background-color: #2bfba8fb;
+  color: #ffffff;
+}
+
+.button-green:hover {
+  background-color: #6fffc5ff;
+}
+
+.button-green:active {
+  background-color: #3dcf94cf;
 }
