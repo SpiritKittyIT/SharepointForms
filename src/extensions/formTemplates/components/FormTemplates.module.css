@@ -30,3 +30,8 @@
   padding: 1rem;
   flex-direction: column;
 }
+
+.card-required:after {
+  content:" *";
+  color: red;
+}

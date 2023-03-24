@@ -8,6 +8,7 @@ import Error from './error';
 import './formTemplates.module.css'
 import TextCard from './cards/textCard';
 import DropDownCard from './cards/dropdownCard';
+import { isNull } from 'lodash';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -88,6 +89,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
     let valid = true
+    setErrorMessage(``)
     Object.keys(item).forEach(key => {
       let skip = false;
       ["FileSystemObjectType", "Id", "ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl", "ContentTypeId", "AuthorId", "EditorId", "OData__UIVersionString", "GUID"]
@@ -98,12 +100,24 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         }})
       if (skip){return}
 
-      if (!getColProps(key, cols)){
+      const colProps = getColProps(key, cols)
+      if (!colProps){
         valid = false
         setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${key}`)
+        return
+      }
+      if (colProps.Required && (item[key] === "" || isNull(item[key]))){
+        valid = false
+        setErrorMessage(`${errorMessage}\n${colProps.Title} cannot be left empty`)
       }
     })
     if (!valid){
+      setShow(true)
+      event.preventDefault()
+      return
+    }
+    if (props.displayMode === FormDisplayMode.Display){
+      setErrorMessage(`${errorMessage}\nYou can not submit form in Display mode`)
       setShow(true)
       event.preventDefault()
       return

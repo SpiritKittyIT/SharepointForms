@@ -1,11 +1,12 @@
 declare interface IColProps {
-    Title: string,
-    InternalName: string,
-    TypeAsString: string,
-    TypeDisplayName: string,
-    Choices?: string[],
-    LookupField?: string,
-    LookupList?: string,
+    Title: string
+    InternalName: string
+    TypeAsString: string
+    TypeDisplayName: string
+    Required: boolean
+    Choices?: string[]
+    LookupField?: string
+    LookupList?: string
     LookupWebId?: string
 }
 
