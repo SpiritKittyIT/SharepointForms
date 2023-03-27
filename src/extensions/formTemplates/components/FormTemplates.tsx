@@ -6,6 +6,7 @@ import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import { FC } from 'react';
 import Error from './error';
 import './formTemplates.module.css'
+import './cards/dropdownCard.css'
 import TextCard from './cards/textCard';
 import DropDownCard from './cards/dropdownCard';
 import { isNull } from 'lodash';
