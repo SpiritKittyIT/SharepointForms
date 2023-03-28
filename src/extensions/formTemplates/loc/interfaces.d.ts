@@ -4,10 +4,16 @@ declare interface IColProps {
     TypeAsString: string
     TypeDisplayName: string
     Required: boolean
+    ReadOnlyField: boolean
     Choices?: string[]
     LookupField?: string
     LookupList?: string
     LookupWebId?: string
+    MaximumValue?: number
+    MinimumValue?: number
+    ShowAsPercentage?: boolean
+    CurrencyLocaleId?: number
+    DisplayFormat?: number
 }
 
 declare interface IHandle<T> {

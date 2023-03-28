@@ -10,6 +10,7 @@ import './cards/dropdownCard.css'
 import TextCard from './cards/textCard';
 import DropDownCard from './cards/dropdownCard';
 import { isNull } from 'lodash';
+import DateCard from './cards/dateCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -88,23 +89,33 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     })
   }, [props])
 
+  const validCols = cols?.map((col) => {
+    if (col.TypeAsString === "User" && !col.ReadOnlyField) {
+      return [`${col.InternalName}Id`, `${col.InternalName}StringId`]
+    }
+
+    return col.InternalName
+  }).flat().concat(["FileSystemObjectType", "Id", "ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl", "ContentTypeId", "AuthorId", "EditorId", "OData__UIVersionString", "GUID"])
+
   const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
     let valid = true
     setErrorMessage(``)
     Object.keys(item).forEach(key => {
-      let skip = false;
-      ["FileSystemObjectType", "Id", "ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl", "ContentTypeId", "AuthorId", "EditorId", "OData__UIVersionString", "GUID"]
-      .forEach(col => {
+      let isValidCol = false;
+      for (const col of validCols) {
         if (key === col) {
-          skip = true;
-          return
-        }})
-      if (skip){return}
+          isValidCol = true;
+          break
+        }
+      }
+      if (!isValidCol) {
+        valid = false
+        setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${key}`)
+        return
+      }
 
       const colProps = getColProps(key, cols)
       if (!colProps){
-        valid = false
-        setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${key}`)
         return
       }
       if (colProps.Required && (item[key] === "" || isNull(item[key]))){
@@ -138,12 +149,15 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <TextCard id="acColNumPercent" colProps={getColProps("acColNumPercent", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <TextCard id="acColNumDecimal" colProps={getColProps("acColNumDecimal", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <TextCard id="acColCurrency" colProps={getColProps("acColCurrency", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <DateCard id="acColDate" colProps={getColProps("acColDate", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <DateCard id="acColDateTime" colProps={getColProps("acColDateTime", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="submit" className='button button-green'>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type="button" className='button button-blue' onClick={() => {
           console.log(cols)
           console.log(item)
+          console.log(validCols)
         }}>Test Info</button>
       </form>
     </>
