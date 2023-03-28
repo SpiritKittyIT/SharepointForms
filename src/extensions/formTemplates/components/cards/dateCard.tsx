@@ -12,7 +12,7 @@ const DateCard: React.FC<IDateCard> = ({id, colProps, displayMode, itemHandle}) 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
     itemHandle.setValue({
       ...itemHandle.value,
-      [event.target.id]: event.target.value,
+      [event.target.id]: colProps?.DisplayFormat ? `${event.target.value}Z` : `${event.target.value}T00:00:00Z`,
     })
   }
 
@@ -23,7 +23,7 @@ const DateCard: React.FC<IDateCard> = ({id, colProps, displayMode, itemHandle}) 
         className='card-input'
         id={id}
         type={colProps?.DisplayFormat ? "datetime-local" : "date"}
-        value={itemHandle.value[id]}
+        value={colProps?.DisplayFormat ? itemHandle?.value[id]?.split('Z')[0] : itemHandle?.value[id]?.split('T')[0]}
         onChange={onChange}
         {...(displayMode === FormDisplayMode.Display ? { disabled: true } : {})}
       />
