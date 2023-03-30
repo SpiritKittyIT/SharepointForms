@@ -72,8 +72,8 @@ export default class FormTemplatesFormCustomizer
     else {
       const error: { error: { message: string } } = await res.json();
       
-      console.log(`An error has occurred while saving the item. Please try again. Error: ${error.error.message}`)
       this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'));
+      throw new Error(error.error.message)
     }
   }
 

@@ -6,7 +6,7 @@ import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import { FC } from 'react';
 import Error from './error';
 import './formTemplates.module.css'
-import './cards/dropdownCard.css'
+import './cards/cardStyles.css'
 import TextCard from './cards/textCard';
 import DropDownCard from './cards/dropdownCard';
 import { isNull } from 'lodash';
@@ -15,7 +15,7 @@ import DateCard from './cards/dateCard';
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
   displayMode: FormDisplayMode;
-  onSave: (item: {}, etag?: string) => void;
+  onSave: (item: {}, etag?: string) => Promise<void>;
   onClose: () => void;
 }
 
@@ -23,8 +23,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   const [item, setItem] = React.useState<{[key: string]:string}>({})
   const [cols, setCols] = React.useState<IColProps[]>([])
   const [etag, setEtag] = React.useState<string>("")
-  const [show, setShow] = React.useState(false)
-  const [errorMessage, setErrorMessage] = React.useState("")
+  const [keys, setKeys] = React.useState<string[]>([])
+  const [show, setShow] = React.useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
     let result: (IColProps | null) = null
@@ -57,6 +58,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
       .then(body => {
         setItem(body)
+        setKeys(Object.keys(body))
         return Promise.resolve();
       })
       .catch(err => {
@@ -89,58 +91,57 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     })
   }, [props])
 
-  const validCols = cols?.map((col) => {
-    if (col.TypeAsString === "User" && !col.ReadOnlyField) {
-      return [`${col.InternalName}Id`, `${col.InternalName}StringId`]
-    }
-
-    return col.InternalName
-  }).flat().concat(["FileSystemObjectType", "Id", "ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl", "ContentTypeId", "AuthorId", "EditorId", "OData__UIVersionString", "GUID"])
-
-  const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
+  const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
     let valid = true
     setErrorMessage(``)
-    Object.keys(item).forEach(key => {
+    Object.keys(item).forEach(colName => {
       let isValidCol = false;
-      for (const col of validCols) {
-        if (key === col) {
+      for (const key of keys) {
+        if (colName === key) {
           isValidCol = true;
           break
         }
       }
       if (!isValidCol) {
         valid = false
-        setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${key}`)
+        setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${colName}`)
         return
       }
 
-      const colProps = getColProps(key, cols)
+      const colProps = getColProps(colName, cols)
       if (!colProps){
         return
       }
-      if (colProps.Required && (item[key] === "" || isNull(item[key]))){
+      if (colProps.Required && (item[colName] === "" || isNull(item[colName]))){
         valid = false
         setErrorMessage(`${errorMessage}\n${colProps.Title} cannot be left empty`)
       }
     })
     if (!valid){
       setShow(true)
-      event.preventDefault()
       return
     }
     if (props.displayMode === FormDisplayMode.Display){
       setErrorMessage(`${errorMessage}\nYou can not submit form in Display mode`)
       setShow(true)
-      event.preventDefault()
       return
     }
-    props.onSave(item, etag)
+    await props.onSave(item, etag).catch((error: Error) => {
+      console.error(error.message)
+      if (error.message.indexOf("The request ETag value") !== -1){
+        setErrorMessage(`${errorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
+      }
+      else {
+        setErrorMessage(`${errorMessage}\nAn unspecified error occured during form submission. Prease leave the site and try again later.`)
+      }
+      setShow(true)
+    })
   }
 
   return (
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className='cards'>
           <TextCard id="Title" colProps={getColProps("Title", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
@@ -152,12 +153,12 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <DateCard id="acColDate" colProps={getColProps("acColDate", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DateCard id="acColDateTime" colProps={getColProps("acColDateTime", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
         </div>
-        {props.displayMode !== FormDisplayMode.Display ? <button type="submit" className='button button-green'>Save</button> : <></>}
+        {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type="button" className='button button-blue' onClick={() => {
           console.log(cols)
           console.log(item)
-          console.log(validCols)
+          console.log(keys)
         }}>Test Info</button>
       </form>
     </>

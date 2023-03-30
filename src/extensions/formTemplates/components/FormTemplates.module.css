@@ -25,37 +25,6 @@
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
-.cards {
-  display: flex;
-  flex-flow: row wrap;
-  padding: 0.5rem;
-}
-
-.card {
-  display: flex;
-  padding: 0.5rem;
-  flex-flow: column wrap;
-  width: 30%;
-  color: rgb(33, 33, 33);
-}
-
-.card-label {
-  font-weight: 500;
-  padding: 0.3rem 0;
-}
-
-.card-input {
-  padding: 0.3rem;
-  line-height: 1.2rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
-}
-
-.card-required:after {
-  content:" *";
-  color: red;
-}
-
 .button {
   padding: 0.5rem 1.1rem;
   margin: 0.5rem;
@@ -113,10 +82,4 @@
 
 .button-green:active {
   background-color: #3dcf94cf;
-}
-
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
