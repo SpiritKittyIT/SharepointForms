@@ -144,3 +144,79 @@ input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.card-checkbox-input {
+  display: none;
+}
+
+.card-checkbox-input:checked ~ .card-checkbox-checkmark {
+  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+}
+
+.card-checkbox-checkmark:after {
+  content: "";
+  position: absolute;
+}
+
+.card-checkbox-input:checked ~ .card-checkbox-checkmark:after {
+  left: 0.45rem;
+  top: 0.25rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  border: solid rgb(255, 255, 255);
+  border-width: 0 0.15rem 0.15rem 0;
+  transform: rotate(45deg);
+}
+
+.card-checkbox-cover {
+  position: relative;
+}
+
+.card-checkbox-checkmark {
+  height: 1.3rem;
+  width: 1.3rem;
+  background: #727272d2;
+  border-radius: 5px;
+}
+
+.card-toggle-cover {
+  position: relative;
+  display: block;
+  width: 2.5rem;
+  height: 1.3rem;
+}
+
+.card-checkbox-input {
+  display: none;
+}
+
+.card-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #727272d2;
+  border-radius: 30px;
+}
+
+.card-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 0.9rem;
+  width: 0.9rem;
+  border-radius: 20px;
+  left: 0.3rem;
+  bottom: 0.2rem;
+  background: rgb(255, 255, 255);
+  transition: 0.4s;
+}
+
+.card-checkbox-input:checked ~ .card-toggle-slider {
+  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+}
+
+.card-checkbox-input:checked ~ .card-toggle-slider:before {
+  transform: translateX(1rem);
+}

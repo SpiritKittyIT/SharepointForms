@@ -11,6 +11,8 @@ import TextCard from './cards/textCard';
 import DropDownCard from './cards/dropdownCard';
 import { isNull } from 'lodash';
 import DateCard from './cards/dateCard';
+import CheckboxCard from './cards/checkboxCard';
+import ToggleButtonCard from './cards/toggleButtonCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -20,7 +22,7 @@ export interface IFormTemplatesProps {
 }
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
-  const [item, setItem] = React.useState<{[key: string]:string}>({})
+  const [item, setItem] = React.useState<{[key: string]:any}>({})
   const [cols, setCols] = React.useState<IColProps[]>([])
   const [etag, setEtag] = React.useState<string>("")
   const [keys, setKeys] = React.useState<string[]>([])
@@ -152,6 +154,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <TextCard id="acColCurrency" colProps={getColProps("acColCurrency", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DateCard id="acColDate" colProps={getColProps("acColDate", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DateCard id="acColDateTime" colProps={getColProps("acColDateTime", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <CheckboxCard id="acColCheck" colProps={getColProps("acColCheck", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <ToggleButtonCard id="acColToggle" colProps={getColProps("acColToggle", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
