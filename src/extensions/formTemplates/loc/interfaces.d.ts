@@ -14,9 +14,28 @@ declare interface IColProps {
     ShowAsPercentage?: boolean
     CurrencyLocaleId?: number
     DisplayFormat?: number
+    SelectionGroup?: number
 }
 
 declare interface IHandle<T> {
     value: T
     setValue: React.Dispatch<React.SetStateAction<T>>
+}
+
+declare interface User {
+    Id: number
+    IsHiddenInUI: boolean
+    LoginName: string
+    Title: string
+    PrincipalType: number
+    Email: string
+    Expiration: string
+    IsEmailAuthenticationGuestUser: boolean
+    IsShareByEmailGuestUser: boolean
+    IsSiteAdmin: boolean
+    UserId: {
+        NameId: string
+        NameIdIssuer: string
+    },
+    UserPrincipalName: string
 }

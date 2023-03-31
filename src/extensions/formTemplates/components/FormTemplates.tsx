@@ -22,7 +22,7 @@ export interface IFormTemplatesProps {
 }
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
-  const [item, setItem] = React.useState<{[key: string]:any}>({})
+  const [item, setItem] = React.useState<{[key: string]:any}>({}) // eslint-disable-line @typescript-eslint/no-explicit-any
   const [cols, setCols] = React.useState<IColProps[]>([])
   const [etag, setEtag] = React.useState<string>("")
   const [keys, setKeys] = React.useState<string[]>([])
@@ -156,6 +156,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <DateCard id="acColDateTime" colProps={getColProps("acColDateTime", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <CheckboxCard id="acColCheck" colProps={getColProps("acColCheck", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <ToggleButtonCard id="acColToggle" colProps={getColProps("acColToggle", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <DropDownCard id="acColOutcome" colProps={getColProps("acColOutcome", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <DropDownCard id="acColPerson" colProps={getColProps("acColPerson", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
+          <DropDownCard id="acColGroup" colProps={getColProps("acColGroup", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
