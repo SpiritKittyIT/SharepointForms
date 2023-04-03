@@ -3,34 +3,41 @@ import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import { SPHttpClient } from '@microsoft/sp-http'
 import * as React from 'react';
 
-interface IDropDownCard {
+interface IDropDownMultiCard {
     id: string
     colProps: IColProps
     displayMode: FormDisplayMode
-    itemHandle: IHandle<{[key: string]:string}>
+    itemHandle: IHandle<{[key: string]:string[]}>
     pageContext?: FormCustomizerContext
 }
 
-const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemHandle, pageContext}) => {
+const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, colProps, displayMode, itemHandle, pageContext}) => {
   const [filter, setFilter] = React.useState<string>("")
   const [active, setActive] = React.useState<boolean>(false)
   const [choices, setChoices] = React.useState<{id: string, text: string}[]>([])
-  const [chosen, setChosen] = React.useState<{id: string, text: string}>({id: '', text: ''})
+  const [chosen, setChosen] = React.useState<{id: string, text: string}[]>([])
   const [users, setUsers] = React.useState<{id: string, text: string}[]>([])
   const [groups, setGroups] = React.useState<{id: string, text: string}[]>([])
 
   const getPropId: (v2?: boolean) => string = (v2) => {
-    if (v2) {return colProps?.TypeAsString === "User" ? `${id}StringId` : id}
-    return colProps?.TypeAsString === "User" ? `${id}Id` : id
+    if (v2) {return colProps?.TypeAsString === "UserMulti" ? `${id}StringId` : id}
+    return colProps?.TypeAsString === "UserMulti" ? `${id}Id` : id
+  }
+
+  const contains: (list: string[], id: string) => boolean = (list, id) => {
+    for (const item of list){
+      if (item.toString() === id.toString()) { return true }
+    }
+    return false
   }
 
   React.useEffect(() => {
-    if (colProps?.TypeAsString === "Choice" || colProps?.TypeAsString === "OutcomeChoice"){
+    if (colProps?.TypeAsString === "ChoiceMulti" || colProps?.TypeAsString === "OutcomeChoiceMulti"){
       setChoices(colProps.Choices.map((choice) => {
         return {id: choice, text: choice}
       }))
     }
-    if (colProps?.TypeAsString === "User"){
+    if (colProps?.TypeAsString === "UserMulti"){
       pageContext.spHttpClient
       .get(`${pageContext.pageContext.web.absoluteUrl}/_api/web/siteusers`, SPHttpClient.configurations.v1, {
         headers: {
@@ -76,47 +83,57 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
       })
       if (colProps?.SelectionGroup === 0){
         pageContext.spHttpClient
-        .get(`${pageContext.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          setGroups(body.value.filter((group: Group) => {
-            return group.OwnerTitle !== "System Account"
-          }).map((group: Group) => {
-            return {id: group.Id, text: group.Title}
-          }).concat(choices))
-          return Promise.resolve();
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      .get(`${pageContext.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
+        headers: {
+          accept: 'application/json;odata.metadata=none'
+        }
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        else {
+          return Promise.reject(res.statusText);
+        }
+      })
+      .then(body => {
+        setGroups(body.value.filter((group: Group) => {
+          return group.OwnerTitle !== "System Account"
+        }).map((group: Group) => {
+          return {id: group.Id, text: group.Title}
+        }).concat(choices))
+        return Promise.resolve();
+      })
+      .catch(err => {
+        console.error(err)
+      })
       }
-    }
+    }  
   }, [colProps])
 
   React.useEffect(() => {setChoices(users.concat(groups))}, [users, groups])
   React.useEffect(() => {
-    for (const choice of choices){
-      if (choice.id === itemHandle?.value[getPropId()]) {setChosen(choice)}
-    }
+    setChosen(choices.filter((choice) => {return contains(itemHandle?.value[getPropId()], choice.id)}))
   }, [choices])
 
-  const setSelected: (id: string, text: string) => void  = (id, text) => {
-    setChosen({id: id, text: text})
+  const select: (id: string, text: string) => void  = (id, text) => {
+    if (contains(chosen.map((item) => {return item.id}), id)) { return }
+    const newChosen =  chosen.concat([{id: id, text: text}]) 
+    setChosen(newChosen)
     itemHandle.setValue({
       ...itemHandle.value,
-      [getPropId()]: id,
-      ...(colProps?.TypeAsString === "User" ? {[getPropId(true)]: id.toString()} : {}),
+      [getPropId()]: newChosen.map((item) => {return item.id}),
+      ...(colProps?.TypeAsString === "UserMulti" ? {[getPropId(true)]: newChosen.map((item) => {return item.id.toString()})} : {}),
+    })
+  }
+
+  const unSelect: (id: string) => void  = (id) => {
+    const newChosen = chosen.filter((item) => {return id !== item.id})
+    setChosen(newChosen)
+    itemHandle.setValue({
+      ...itemHandle.value,
+      [getPropId()]: newChosen.map((item) => {return item.id}),
+      ...(colProps?.TypeAsString === "UserMulti" ? {[getPropId(true)]: newChosen.map((item) => {return item.id.toString()})} : {}),
     })
   }
   
@@ -125,19 +142,23 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
       <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
       <div id={id} className="card-select-menu">
         <div className={`card-dropdown-input ${itemHandle.value[getPropId()] ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-          {itemHandle.value[getPropId()]
-            ? <div className='card-selected'>
-                <div className='card-selected-value'>{chosen.text}</div>
+          { chosen.length > 0
+            ? chosen.map((item) => {return (
+              <div key={item.id} className='card-selected'>
+                <div className='card-selected-value'>{item.text}</div>
               </div>
+              )}) 
               : `Select ${colProps?.Title}...`}
         </div>
         <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
           <div className={`card-filter-selected ${itemHandle.value[getPropId()] ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            {itemHandle.value[getPropId()]
-              ? <div className='card-selected'>
-                  <div className='card-selected-value'>{chosen.text}</div>
-                  <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); if(displayMode !== FormDisplayMode.Display) {setSelected('', '')}}}>X</div>
+            { chosen.length > 0
+              ? chosen.map((item) => {return (
+                <div key={item.id} className='card-selected'>
+                  <div className='card-selected-value'>{item.text}</div>
+                  <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); if(displayMode !== FormDisplayMode.Display) {unSelect(item.id)}}}>X</div>
                 </div>
+                )})
               : `Select ${colProps?.Title}...`}
           </div>
           <div className="card-select-filter">
@@ -146,7 +167,7 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
           <div className="card-select-options">
             {choices.filter((choice) => {return choice.text.toLowerCase().indexOf(filter.toLowerCase()) >= 0}).map((choice) => {return(
               <div className="option" key={`${id}-${choice.id}`} onClick={(event) => {document.getElementById(`${id}-${choice.id}`)?.click()}}>
-                <input type="radio" className="radio" id={`${id}-${choice.id}`} value={choice.id} name={id} checked={choice.id === itemHandle.value[getPropId()]} onChange={(event) => {setSelected(choice.id, choice.text)}} disabled={displayMode === FormDisplayMode.Display}/>
+                <input type="checkbox" className="radio" id={`${id}-${choice.id}`} value={choice.id} name={id} checked={contains(itemHandle.value[getPropId()], choice.id)} onChange={(event) => {select(choice.id, choice.text)}} disabled={displayMode === FormDisplayMode.Display}/>
                 <label className="option-label" htmlFor={`${id}-${choice.id}`}>{choice.text}</label>
               </div>
             )})}
@@ -157,4 +178,4 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
   )
 };
 
-export default DropDownCard;
+export default DropDownMultiCard;

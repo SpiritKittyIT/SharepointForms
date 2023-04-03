@@ -13,6 +13,7 @@ import { isNull } from 'lodash';
 import DateCard from './cards/dateCard';
 import CheckboxCard from './cards/checkboxCard';
 import ToggleButtonCard from './cards/toggleButtonCard';
+import DropDownMultiCard from './cards/dropdownMultiCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -157,7 +158,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <CheckboxCard id="acColCheck" colProps={getColProps("acColCheck", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <ToggleButtonCard id="acColToggle" colProps={getColProps("acColToggle", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DropDownCard id="acColOutcome" colProps={getColProps("acColOutcome", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <DropDownCard id="acColPerson" colProps={getColProps("acColPerson", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
+          <DropDownMultiCard id="acColPerson" colProps={getColProps("acColPerson", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
           <DropDownCard id="acColGroup" colProps={getColProps("acColGroup", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
