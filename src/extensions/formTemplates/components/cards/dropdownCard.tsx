@@ -16,6 +16,8 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
   const [active, setActive] = React.useState<boolean>(false)
   const [choices, setChoices] = React.useState<{id: string, text: string}[]>([])
   const [chosen, setChosen] = React.useState<{id: string, text: string}>({id: '', text: ''})
+  const [users, setUsers] = React.useState<{id: string, text: string}[]>([])
+  const [groups, setGroups] = React.useState<{id: string, text: string}[]>([])
 
   const getPropId: () => string = () => {
     return colProps?.TypeAsString === "User" ? `${id}Id` : id
@@ -44,7 +46,7 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
         }
       })
       .then(body => {
-        setChoices(body.value.filter((user: User) => {
+        setUsers(body.value.filter((user: User) => {
           switch (user.LoginName) {
             case "c:0(.s|true":
               return false
@@ -65,18 +67,46 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
           }
           return false
         }).map((user: User) => {
-          console.log(`${user.Id}, ${itemHandle.value[getPropId()]}`)
           if (`${user.Id}` === itemHandle.value[getPropId()]) {setChosen({id: `${user.Id}`, text: user.Title})}
           return {id: user.Id, text: user.Title}
-        }))
+        }).concat(choices))
         return Promise.resolve();
       })
       .catch(err => {
-        console.log(true)
         console.error(err)
       })
+      if (colProps?.SelectionGroup === 0){
+        pageContext.spHttpClient
+      .get(`${pageContext.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
+        headers: {
+          accept: 'application/json;odata.metadata=none'
+        }
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        else {
+          return Promise.reject(res.statusText);
+        }
+      })
+      .then(body => {
+        setGroups(body.value.filter((group: Group) => {
+          return group.OwnerTitle !== "System Account"
+        }).map((group: Group) => {
+          if (group.Id.toString() === itemHandle.value[getPropId()]?.toString()) {setChosen({id: `${group.Id}`, text: group.Title})}
+          return {id: group.Id, text: group.Title}
+        }).concat(choices))
+        return Promise.resolve();
+      })
+      .catch(err => {
+        console.error(err)
+      })
+      }
     }  
   }, [colProps])
+
+  React.useEffect(() => {setChoices(users.concat(groups))}, [users, groups])
 
   const setSelected: (newVal: string, selectedText: string) => void  = (newVal, selectedText) => {
     setChosen({id: newVal, text: selectedText})
@@ -88,10 +118,6 @@ const DropDownCard: React.FC<IDropDownCard> = ({id, colProps, displayMode, itemH
   
   return (
     <div className='card'>
-      <button type="button" className='button button-blue' onClick={() => {
-          console.log(choices)
-          console.log(chosen)
-        }}>Test Info</button>
       <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
       <div id={id} className="card-select-menu">
         <div className={`card-dropdown-input ${itemHandle.value[getPropId()] ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
