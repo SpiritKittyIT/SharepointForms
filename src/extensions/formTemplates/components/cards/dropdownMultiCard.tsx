@@ -11,7 +11,22 @@ interface IDropDownMultiCard {
     pageContext?: FormCustomizerContext
 }
 
+function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: boolean) => void): void { // eslint-disable-line @typescript-eslint/no-explicit-any
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent): void {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setActive(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
+
 const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, colProps, displayMode, itemHandle, pageContext}) => {
+  const wrapperRef = React.useRef(null)
   const [filter, setFilter] = React.useState<string>("")
   const [active, setActive] = React.useState<boolean>(false)
   const [choices, setChoices] = React.useState<{id: string, text: string}[]>([])
@@ -136,11 +151,13 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, colProps, displayM
       ...(colProps?.TypeAsString === "UserMulti" ? {[getPropId(true)]: newChosen.map((item) => {return item.id.toString()})} : {}),
     })
   }
+
+  useOutsideHider(wrapperRef, setActive)
   
   return (
     <div className='card'>
       <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
-      <div id={id} className="card-select-menu">
+      <div id={id} ref={wrapperRef} className="card-select-menu">
         <div className={`card-dropdown-input ${itemHandle.value[getPropId()] ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
           { chosen.length > 0
             ? chosen.map((item) => {return (
