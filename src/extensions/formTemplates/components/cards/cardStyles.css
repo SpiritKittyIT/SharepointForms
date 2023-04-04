@@ -224,3 +224,7 @@ input[type=number]::-webkit-inner-spin-button {
 .card-checkbox-input:checked ~ .card-toggle-slider:before {
   transform: translateX(1rem);
 }
+
+.card-error {
+  color: rgb(255, 0, 0);
+}
