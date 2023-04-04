@@ -129,6 +129,11 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           setErrorMessage(`${errorMessage}\n${colProps.Title} cannot be left empty`)
         }
       })
+      const cardErrors = document.getElementsByClassName('card-error')
+      if (cardErrors.length > 0) { valid = false }
+      for (let i = 0; i < cardErrors.length; i++) {
+        setErrorMessage(cardErrors[i].textContent)
+      }
       if (!valid){
         setShow(true)
         return
@@ -206,6 +211,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         ["Title"]: value,
       })
     }
+    const TitleVerify = (value: string) => {return value.indexOf("Item") === 0 ? '' : 'Title needs to start with "Item"'}
     const TitleHandle = {value: item["Title"], setValue: TitleSet}
     /* eslint-enable */
   //#endregion
@@ -216,7 +222,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <form>
         <div className='cards'>
           <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={props.displayMode}
-                        required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle}/>
+                        required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
           <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <NumberCard id="acColNumber" title={acColNumberProps() ? acColNumberProps().Title : ''} displayMode={props.displayMode}
                         required={acColNumberProps() ? acColNumberProps().Required : false} itemHandle={acColNumberHandle}/>

@@ -14,12 +14,8 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    const verificationResult = valueVerify(event.target.value)
-    if (verificationResult === ''){
-      itemHandle.setValue(event.target.value)
-      return
-    }
-    setErrorMessage(verificationResult)
+    setErrorMessage(valueVerify(event.target.value))
+    itemHandle.setValue(event.target.value)
   }
 
   try {
@@ -43,7 +39,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
           value={itemHandle.value}
           onChange={onChange}
         />
-        <div>{errorMessage}</div>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
     )
   }

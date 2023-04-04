@@ -16,12 +16,8 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    const verificationResult = valueVerify(+event.target.value)
-    if (verificationResult === ''){
-      itemHandle.setValue(+event.target.value)
-      return
-    }
-    setErrorMessage(verificationResult)
+    setErrorMessage(valueVerify(+event.target.value))
+    itemHandle.setValue(+event.target.value)
   }
 
   try {
@@ -48,7 +44,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
           {...(minValue ? { min: minValue } : {})}
           {...(maxValue ? { max: maxValue } : {})}
         />
-        <div>{errorMessage}</div>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
     )
   }

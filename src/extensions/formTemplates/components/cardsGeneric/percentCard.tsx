@@ -16,12 +16,8 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    const verificationResult = valueVerify(+event.target.value)
-    if (verificationResult === ''){
-      itemHandle.setValue(+event.target.value / 100)
-      return
-    }
-    setErrorMessage(verificationResult)
+    setErrorMessage(valueVerify(+event.target.value))
+    itemHandle.setValue(+event.target.value / 100)
   }
 
   try {
@@ -48,7 +44,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
           {...(minValue ? { min: minValue } : {})}
           {...(maxValue ? { max: maxValue } : {})}
         />
-        <div>{errorMessage}</div>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
     )
   }
