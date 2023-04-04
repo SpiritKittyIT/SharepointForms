@@ -14,6 +14,7 @@ import DateCard from './cards/dateCard';
 import CheckboxCard from './cards/checkboxCard';
 import ToggleButtonCard from './cards/toggleButtonCard';
 import DropDownMultiCard from './cards/dropdownMultiCard';
+import UrlCard from './cards/urlCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -23,23 +24,16 @@ export interface IFormTemplatesProps {
 }
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
+  //#region TEMPLATE_STATES
   const [item, setItem] = React.useState<{[key: string]:any}>({}) // eslint-disable-line @typescript-eslint/no-explicit-any
   const [cols, setCols] = React.useState<IColProps[]>([])
   const [etag, setEtag] = React.useState<string>("")
   const [keys, setKeys] = React.useState<string[]>([])
   const [show, setShow] = React.useState<boolean>(false)
   const [errorMessage, setErrorMessage] = React.useState<string>("")
+  //#endregion
 
-  const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
-    let result: (IColProps | null) = null
-    cols.forEach(col => {
-      if (col.InternalName === colName) {
-        result = col
-      }
-    })
-    return result
-  }
-
+  //#region ON_LOAD
   React.useEffect(() => {
     if (props.displayMode !== FormDisplayMode.New) {
       props.context.spHttpClient
@@ -93,6 +87,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       console.error(err)
     })
   }, [props])
+  //#endregion
+
+  //#region TEMPLATE_FUNCTIONS
+  const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
+    let result: (IColProps | null) = null
+    cols.forEach(col => {
+      if (col.InternalName === colName) {
+        result = col
+      }
+    })
+    return result
+  }
 
   const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
     let valid = true
@@ -140,6 +146,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       setShow(true)
     })
   }
+  //#endregion
 
   return (
     <>
@@ -160,6 +167,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <DropDownCard id="acColOutcome" colProps={getColProps("acColOutcome", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
           <DropDownMultiCard id="acColPerson" colProps={getColProps("acColPerson", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
           <DropDownCard id="acColGroup" colProps={getColProps("acColGroup", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
+          <UrlCard id="acColHyperlink" colProps={getColProps("acColHyperlink", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+          <UrlCard id="acColPicture" colProps={getColProps("acColPicture", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
