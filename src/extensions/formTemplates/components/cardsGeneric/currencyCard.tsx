@@ -25,7 +25,7 @@ const CurrencyCard: React.FC<ICurrencyCard> = ({id, title, currencySymbol, displ
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? `${title} ${currencySymbol}` : ` ${currencySymbol}`}
+          {`${title} ${currencySymbol}`}
         </label>
         <div>{itemHandle.value} {currencySymbol}</div>
       </div>
@@ -33,7 +33,7 @@ const CurrencyCard: React.FC<ICurrencyCard> = ({id, title, currencySymbol, displ
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? `${title} ${currencySymbol}` : ` ${currencySymbol}`}
+          {`${title} ${currencySymbol}`}
         </label>
         <input
           className='card-input'

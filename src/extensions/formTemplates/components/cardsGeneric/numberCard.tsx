@@ -24,7 +24,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? title : ''}
+          {title}
         </label>
         <div>{itemHandle.value}</div>
       </div>
@@ -32,7 +32,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? title : ''}
+          {title}
         </label>
         <input
           className='card-input'

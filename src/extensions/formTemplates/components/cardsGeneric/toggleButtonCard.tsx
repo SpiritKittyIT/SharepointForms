@@ -21,7 +21,7 @@ const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, 
   try {
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <label className="card-toggle-cover">
           <input
             id={id}
@@ -37,7 +37,7 @@ const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, 
     )
     : (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <label className="card-toggle-cover">
           <input
             id={id}

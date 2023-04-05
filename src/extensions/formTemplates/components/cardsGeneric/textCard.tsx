@@ -22,7 +22,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? title : ''}
+          {title}
         </label>
         <div>{itemHandle.value}</div>
       </div>
@@ -30,7 +30,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? title : ''}
+          {title}
         </label>
         <input
           className='card-input'

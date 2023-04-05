@@ -21,7 +21,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
   try {
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <label className='card-checkbox-cover'>
           <input
             id={id}
@@ -37,7 +37,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
     )
     : (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <label className='card-checkbox-cover'>
           <input
             id={id}

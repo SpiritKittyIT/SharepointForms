@@ -48,7 +48,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
   try {
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
           <div className={`card-dropdown-input ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             {chosen
@@ -71,7 +71,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
     )
     : (
       <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title ? title : ""}</label>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
           <div className={`card-dropdown-input ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             {chosen

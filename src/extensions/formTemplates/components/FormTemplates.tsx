@@ -18,6 +18,7 @@ import DateCard from './cardsGeneric/dateCard';
 import SelectMultiCard from './cardsGeneric/selectMultiCard';
 import CheckboxCard from './cardsGeneric/checkboxCard';
 import ToggleButtonCard from './cardsGeneric/toggleButtonCard';
+import UrlCard from './cardsGeneric/urlCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -411,6 +412,15 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColToggleHandle = {value: item["acColToggle"], setValue: acColToggleSet}
 
+    const acColHyperlinkProps = () => {return getColProps("acColHyperlink", cols)}
+    const acColHyperlinkSet = (value: {Description: string, Url: string}) => {
+      setItem({
+        ...item,
+        ["acColHyperlink"]: value,
+      })
+    }
+    const acColHyperlinkHandle = {value: item["acColHyperlink"], setValue: acColHyperlinkSet}
+
     /* eslint-enable */
   //#endregion
 
@@ -452,6 +462,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           <SelectCard id="acColGroup" title={acColGroupProps ? acColGroupProps.Title : ''} displayMode={props.displayMode}
                       required={acColGroupProps ? acColGroupProps.Required : false} itemHandle={acColGroupHandle}
                       choices={acColGroupChoices} selected={acColGroupSelected}/>
+          <UrlCard id="acColHyperlink" title={acColHyperlinkProps() ? acColHyperlinkProps().Title : ''} displayMode={props.displayMode}
+                      required={acColHyperlinkProps() ? acColHyperlinkProps().Required : false} itemHandle={acColHyperlinkHandle}/>
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>

@@ -24,7 +24,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? `${title} %` : ' %'}
+          {`${title} %`}
         </label>
         <div>{itemHandle.value} %</div>
       </div>
@@ -32,7 +32,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title ? `${title} %` : ' %'}
+          {`${title} %`}
         </label>
         <input
           className='card-input'
