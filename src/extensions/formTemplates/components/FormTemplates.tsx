@@ -7,17 +7,17 @@ import { FC } from 'react';
 import Error from './error';
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
-import DropDownCard from './cards/dropdownCard';
 import { isNull } from 'lodash';
-import DateCard from './cards/dateCard';
-import CheckboxCard from './cards/checkboxCard';
-import ToggleButtonCard from './cards/toggleButtonCard';
-import DropDownMultiCard from './cards/dropdownMultiCard';
 import CurrencyCard from './cardsGeneric/currencyCard';
 import { localeCurrencies } from '../loc/dictionaries';
 import NumberCard from './cardsGeneric/numberCard';
 import PercentCard from './cardsGeneric/percentCard';
 import TextCard from './cardsGeneric/textCard';
+import SelectCard from './cardsGeneric/selectCard';
+import DateCard from './cardsGeneric/dateCard';
+import SelectMultiCard from './cardsGeneric/selectMultiCard';
+import CheckboxCard from './cardsGeneric/checkboxCard';
+import ToggleButtonCard from './cardsGeneric/toggleButtonCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -213,6 +213,204 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const TitleVerify = (value: string) => {return value.indexOf("Item") === 0 ? '' : 'Title needs to start with "Item"'}
     const TitleHandle = {value: item["Title"], setValue: TitleSet}
+
+    const acColChoiceProps = () => {return getColProps("acColChoice", cols)}
+    const acColChoiceSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColChoice"]: value,
+      })
+    }
+    const [acColChoiceChoices, acColChoiceChoicesSet] = React.useState<IChoice[]>([])
+    const [acColChoiceSelected, acColChoiceSelectedSet] = React.useState<IChoice>()
+    React.useEffect(() => {
+      acColChoiceChoicesSet(acColChoiceProps()?.Choices.map((choice) => {return {Id: choice, Title: choice}}))
+      acColChoiceSelectedSet({Id: item["acColChoice"], Title: item["acColChoice"]})
+    }, [cols, keys])
+    const acColChoiceHandle = {value: item["acColChoice"], setValue: acColChoiceSet}
+
+    const acColOutcomeProps = () => {return getColProps("acColOutcome", cols)}
+    const acColOutcomeSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColOutcome"]: value,
+      })
+    }
+    const [acColOutcomeChoices, acColOutcomeChoicesSet] = React.useState<IChoice[]>([])
+    const [acColOutcomeSelected, acColOutcomeSelectedSet] = React.useState<IChoice>()
+    React.useEffect(() => {
+      acColOutcomeChoicesSet(acColOutcomeProps()?.Choices.map((choice) => {return {Id: choice, Title: choice}}))
+      acColOutcomeSelectedSet({Id: item["acColOutcome"], Title: item["acColOutcome"]})
+    }, [cols, keys])
+    const acColOutcomeHandle = {value: item["acColOutcome"], setValue: acColOutcomeSet}
+
+    const [siteUsers, setSiteUsers] = React.useState<User[]>([])
+    const [siteGroups, setSiteGroups] = React.useState<Group[]>([])
+    const [choiceUsers, setChoiceUsers] = React.useState<IChoice[]>([])
+    const [choiceGroups, setChoiceGroups] = React.useState<IChoice[]>([])
+
+    React.useEffect(() => {
+      props.context.spHttpClient
+        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/siteusers`, SPHttpClient.configurations.v1, {
+          headers: {
+            accept: 'application/json;odata.metadata=none'
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          }
+          else {
+            return Promise.reject(res.statusText);
+          }
+        })
+        .then(body => {
+          setSiteUsers(body.value.filter((user: User) => {
+            switch (user.LoginName) {
+              case "c:0(.s|true":
+                return false
+              case "i:0#.w|nt service\\spsearch":
+                return false
+              case "i:0i.t|00000003-0000-0ff1-ce00-000000000000|app@sharepoint":
+                return false
+              case "SHAREPOINT\\system":
+                return false
+              default:
+                return true
+            }
+          }))
+          return Promise.resolve();
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        props.context.spHttpClient
+          .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
+            headers: {
+              accept: 'application/json;odata.metadata=none'
+            }
+          })
+          .then(res => {
+            if (res.ok) {
+              return res.json();
+            }
+            else {
+              return Promise.reject(res.statusText);
+            }
+          })
+          .then(body => {
+            setSiteGroups(body.value.filter((group: Group) => {
+              return group.OwnerTitle !== "System Account"
+            }))
+            return Promise.resolve();
+          })
+          .catch(err => {
+            console.error(err)
+          })
+    }, [props])
+    React.useEffect(() => {
+      setChoiceUsers(siteUsers.filter((siteUser) => {
+        return siteUser.LoginName.startsWith("i:0#.f|membership|")
+      }).map((item) => {return {...item, Id: `${item.Id}`}}))
+
+      const groupUsers: IChoice[] = siteUsers.filter((siteUser) => {
+        return !siteUser.LoginName.startsWith("i:0#.f|membership|")
+      }).map((item) => {return {...item, Id: `${item.Id}`}})
+      const groups: IChoice[] = siteGroups.map((item) => {return {...item, Id: `${item.Id}`}})
+
+      setChoiceGroups(groups.concat(groupUsers))
+    }, [siteUsers, siteGroups])
+
+    const [acColGroupProps, acColGroupPropsSet] = React.useState<IColProps>()
+    React.useEffect(() => {
+      acColGroupPropsSet(getColProps("acColGroup", cols))
+    }, [cols])
+    const acColGroupSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColGroupId"]: +value,
+        ["acColGroupStringId"]: value,
+      })
+    }
+    const [acColGroupChoices, acColGroupChoicesSet] = React.useState<IChoice[]>(choiceGroups)
+    const [acColGroupSelected, acColGroupSelectedSet] = React.useState<IChoice>()
+    React.useEffect(() => {
+      const groupChoices = choiceGroups.concat(choiceUsers)
+      acColGroupChoicesSet(groupChoices)
+      acColGroupSelectedSet(() => {
+        for (const choice of groupChoices) {
+          if (choice.Id === item["acColGroupStringId"]) {
+            return choice
+          }
+        }
+      })
+    }, [choiceUsers, choiceGroups, keys])
+    const acColGroupHandle = {value: item["acColGroupId"], setValue: acColGroupSet}
+
+    const [acColPersonProps, acColPersonPropsSet] = React.useState<IColProps>()
+    React.useEffect(() => {
+      acColPersonPropsSet(getColProps("acColPerson", cols))
+    }, [cols])
+    const acColPersonSet = (value: string[]) => {
+      setItem({
+        ...item,
+        ["acColPersonId"]: value.map((val) => {return +val}),
+        ["acColPersonStringId"]: value,
+      })
+    }
+    const [acColPersonChoices, acColPersonChoicesSet] = React.useState<IChoice[]>(choiceGroups)
+    const [acColPersonSelected, acColPersonSelectedSet] = React.useState<IChoice[]>([])
+    React.useEffect(() => {
+      const isChosen: (id: string) => boolean = (id) => {
+        const items: string[] = item["acColPersonStringId"]
+        if (items) {
+          for (const item of items){
+            if (item === id) { return true }
+          }
+        }
+        return false
+      }
+      acColPersonChoicesSet(choiceUsers)
+      acColPersonSelectedSet(choiceUsers.filter((choice) => {return isChosen(choice.Id)}))
+    }, [choiceUsers, choiceGroups, keys])
+    const acColPersonHandle = {value: item["acColPersonId"], setValue: acColPersonSet}
+
+    const acColDateProps = () => {return getColProps("acColDate", cols)}
+    const acColDateSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColDate"]: value,
+      })
+    }
+    const acColDateHandle = {value: item["acColDate"], setValue: acColDateSet}
+
+    const acColDateTimeProps = () => {return getColProps("acColDateTime", cols)}
+    const acColDateTimeSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColDateTime"]: value,
+      })
+    }
+    const acColDateTimeHandle = {value: item["acColDateTime"], setValue: acColDateTimeSet}
+
+    const acColCheckProps = () => {return getColProps("acColCheck", cols)}
+    const acColCheckSet = (value: boolean) => {
+      setItem({
+        ...item,
+        ["acColCheck"]: value,
+      })
+    }
+    const acColCheckHandle = {value: item["acColCheck"], setValue: acColCheckSet}
+
+    const acColToggleProps = () => {return getColProps("acColToggle", cols)}
+    const acColToggleSet = (value: boolean) => {
+      setItem({
+        ...item,
+        ["acColToggle"]: value,
+      })
+    }
+    const acColToggleHandle = {value: item["acColToggle"], setValue: acColToggleSet}
+
     /* eslint-enable */
   //#endregion
 
@@ -222,33 +420,45 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <form>
         <div className='cards'>
           <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={props.displayMode}
-                        required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
-          <DropDownCard id="acColChoice" colProps={getColProps("acColChoice", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
+                    required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
+          <SelectCard id="acColChoice" title={acColChoiceProps() ? acColChoiceProps().Title : ''} displayMode={props.displayMode}
+                      required={acColChoiceProps() ? acColChoiceProps().Required : false} itemHandle={acColChoiceHandle}
+                      choices={acColChoiceChoices} selected={acColChoiceSelected}/>
           <NumberCard id="acColNumber" title={acColNumberProps() ? acColNumberProps().Title : ''} displayMode={props.displayMode}
-                        required={acColNumberProps() ? acColNumberProps().Required : false} itemHandle={acColNumberHandle}/>
+                      required={acColNumberProps() ? acColNumberProps().Required : false} itemHandle={acColNumberHandle}/>
           <NumberCard id="acColNumRange" title={acColNumRangeProps() ? acColNumRangeProps().Title : ''} displayMode={props.displayMode}
-                        required={acColNumRangeProps() ? acColNumRangeProps().Required : false} itemHandle={acColNumRangeHandle}
-                        minValue={acColNumRangeProps() ? acColNumRangeProps().MinimumValue : null} maxValue={acColNumRangeProps() ? acColNumRangeProps().MaximumValue : null}/>
+                      required={acColNumRangeProps() ? acColNumRangeProps().Required : false} itemHandle={acColNumRangeHandle}
+                      minValue={acColNumRangeProps() ? acColNumRangeProps().MinimumValue : null} maxValue={acColNumRangeProps() ? acColNumRangeProps().MaximumValue : null}/>
           <PercentCard id="acColNumPercent" title={acColNumPercentProps() ? acColNumPercentProps().Title : ''} displayMode={props.displayMode}
-                        required={acColNumPercentProps() ? acColNumPercentProps().Required : false} itemHandle={acColNumPercentHandle}/>
+                       required={acColNumPercentProps() ? acColNumPercentProps().Required : false} itemHandle={acColNumPercentHandle}/>
           <NumberCard id="acColNumDecimal" title={acColNumDecimalProps() ? acColNumDecimalProps().Title : ''} displayMode={props.displayMode}
-                        required={acColNumDecimalProps() ? acColNumDecimalProps().Required : false} itemHandle={acColNumDecimalHandle}/>
+                      required={acColNumDecimalProps() ? acColNumDecimalProps().Required : false} itemHandle={acColNumDecimalHandle}/>
           <CurrencyCard id="acColCurrency" title={acColCurrencyProps() ? acColCurrencyProps().Title : ''} currencySymbol={acColCurrencySymbol()} displayMode={props.displayMode}
                         required={acColCurrencyProps() ? acColCurrencyProps().Required : false} itemHandle={acColCurrencyHandle}/>
-          <DateCard id="acColDate" colProps={getColProps("acColDate", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <DateCard id="acColDateTime" colProps={getColProps("acColDateTime", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <CheckboxCard id="acColCheck" colProps={getColProps("acColCheck", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <ToggleButtonCard id="acColToggle" colProps={getColProps("acColToggle", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <DropDownCard id="acColOutcome" colProps={getColProps("acColOutcome", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} />
-          <DropDownMultiCard id="acColPerson" colProps={getColProps("acColPerson", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
-          <DropDownCard id="acColGroup" colProps={getColProps("acColGroup", cols)} displayMode={props.displayMode} itemHandle={{value: item, setValue: setItem}} pageContext={props.context} />
+          <DateCard id="acColDate" title={acColDateProps() ? acColDateProps().Title : ''} displayMode={props.displayMode}
+                    required={acColDateProps() ? acColDateProps().Required : false} itemHandle={acColDateHandle} dateonly={true}/>
+          <DateCard id="acColDateTime" title={acColDateTimeProps() ? acColDateTimeProps().Title : ''} displayMode={props.displayMode}
+                    required={acColDateTimeProps() ? acColDateTimeProps().Required : false} itemHandle={acColDateTimeHandle} dateonly={false}/>
+          <CheckboxCard id="acColCheck" title={acColCheckProps() ? acColCheckProps().Title : ''} displayMode={props.displayMode}
+                      required={acColCheckProps() ? acColCheckProps().Required : false} itemHandle={acColCheckHandle}/>
+          <ToggleButtonCard  id="acColToggle" title={acColToggleProps() ? acColToggleProps().Title : ''} displayMode={props.displayMode}
+                      required={acColToggleProps() ? acColToggleProps().Required : false} itemHandle={acColToggleHandle}/>
+          <SelectCard id="acColOutcome" title={acColOutcomeProps() ? acColOutcomeProps().Title : ''} displayMode={props.displayMode}
+                      required={acColOutcomeProps() ? acColOutcomeProps().Required : false} itemHandle={acColOutcomeHandle}
+                      choices={acColOutcomeChoices} selected={acColOutcomeSelected}/>
+          <SelectMultiCard id="acColPerson" title={acColPersonProps ? acColPersonProps.Title : ''} displayMode={props.displayMode}
+                      required={acColPersonProps ? acColPersonProps.Required : false} itemHandle={acColPersonHandle}
+                      choices={acColPersonChoices} selected={acColPersonSelected}/>
+          <SelectCard id="acColGroup" title={acColGroupProps ? acColGroupProps.Title : ''} displayMode={props.displayMode}
+                      required={acColGroupProps ? acColGroupProps.Required : false} itemHandle={acColGroupHandle}
+                      choices={acColGroupChoices} selected={acColGroupSelected}/>
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type="button" className='button button-blue' onClick={() => {
-          console.log(cols)
+          //console.log(cols)
           console.log(item)
-          console.log(keys)
+          //console.log(keys)
         }}>Test Info</button>
       </form>
     </>

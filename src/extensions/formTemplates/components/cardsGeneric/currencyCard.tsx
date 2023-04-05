@@ -7,10 +7,7 @@ interface ICurrencyCard {
   currencySymbol: string
   displayMode: FormDisplayMode
   required: boolean
-  itemHandle: {
-    value: number
-    setValue: (value: number) => void
-  }
+  itemHandle: IHandle<number>
   valueVerify?: (value: number) => string
   minValue?: number
   maxValue?: number

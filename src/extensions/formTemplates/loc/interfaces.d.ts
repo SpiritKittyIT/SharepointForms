@@ -54,3 +54,9 @@ declare interface Group {
   RequestToJoinLeaveEmailSetting: string
   Title: string
 }
+
+interface IChoice {
+  Id: string,
+  Title: string,
+  [Key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
+}
