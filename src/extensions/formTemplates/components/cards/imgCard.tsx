@@ -41,11 +41,11 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
 
   try {
     return displayMode === FormDisplayMode.Display ? (
-      <div className='card'>
+      <div className='card-image'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div className='card-input card-image-display' id={id}>
+        <div id={id} className='card-input-d card-image-display'>
           <img className='card-image-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
         </div>
       </div>

@@ -431,6 +431,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColPictureHandle = {value: item["acColPicture"], setValue: acColPictureSet}
 
+    const displayMode = props.displayMode
+
     /* eslint-enable */
   //#endregion
 
@@ -439,45 +441,45 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form>
         <div className='cards'>
-          <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={props.displayMode}
+          <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={displayMode}
                     required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
-          <SelectCard id="acColChoice" title={acColChoiceProps() ? acColChoiceProps().Title : ''} displayMode={props.displayMode}
+          <SelectCard id="acColChoice" title={acColChoiceProps() ? acColChoiceProps().Title : ''} displayMode={displayMode}
                       required={acColChoiceProps() ? acColChoiceProps().Required : false} itemHandle={acColChoiceHandle}
                       choices={acColChoiceChoices} selected={acColChoiceSelected}/>
-          <NumberCard id="acColNumber" title={acColNumberProps() ? acColNumberProps().Title : ''} displayMode={props.displayMode}
+          <NumberCard id="acColNumber" title={acColNumberProps() ? acColNumberProps().Title : ''} displayMode={displayMode}
                       required={acColNumberProps() ? acColNumberProps().Required : false} itemHandle={acColNumberHandle}/>
-          <NumberCard id="acColNumRange" title={acColNumRangeProps() ? acColNumRangeProps().Title : ''} displayMode={props.displayMode}
+          <NumberCard id="acColNumRange" title={acColNumRangeProps() ? acColNumRangeProps().Title : ''} displayMode={displayMode}
                       required={acColNumRangeProps() ? acColNumRangeProps().Required : false} itemHandle={acColNumRangeHandle}
                       minValue={acColNumRangeProps() ? acColNumRangeProps().MinimumValue : null} maxValue={acColNumRangeProps() ? acColNumRangeProps().MaximumValue : null}/>
-          <PercentCard id="acColNumPercent" title={acColNumPercentProps() ? acColNumPercentProps().Title : ''} displayMode={props.displayMode}
+          <PercentCard id="acColNumPercent" title={acColNumPercentProps() ? acColNumPercentProps().Title : ''} displayMode={displayMode}
                        required={acColNumPercentProps() ? acColNumPercentProps().Required : false} itemHandle={acColNumPercentHandle}/>
-          <NumberCard id="acColNumDecimal" title={acColNumDecimalProps() ? acColNumDecimalProps().Title : ''} displayMode={props.displayMode}
+          <NumberCard id="acColNumDecimal" title={acColNumDecimalProps() ? acColNumDecimalProps().Title : ''} displayMode={displayMode}
                       required={acColNumDecimalProps() ? acColNumDecimalProps().Required : false} itemHandle={acColNumDecimalHandle}/>
-          <CurrencyCard id="acColCurrency" title={acColCurrencyProps() ? acColCurrencyProps().Title : ''} currencySymbol={acColCurrencySymbol()} displayMode={props.displayMode}
+          <CurrencyCard id="acColCurrency" title={acColCurrencyProps() ? acColCurrencyProps().Title : ''} currencySymbol={acColCurrencySymbol()} displayMode={displayMode}
                         required={acColCurrencyProps() ? acColCurrencyProps().Required : false} itemHandle={acColCurrencyHandle}/>
-          <DateCard id="acColDate" title={acColDateProps() ? acColDateProps().Title : ''} displayMode={props.displayMode}
+          <DateCard id="acColDate" title={acColDateProps() ? acColDateProps().Title : ''} displayMode={displayMode}
                     required={acColDateProps() ? acColDateProps().Required : false} itemHandle={acColDateHandle} dateonly={true}/>
-          <DateCard id="acColDateTime" title={acColDateTimeProps() ? acColDateTimeProps().Title : ''} displayMode={props.displayMode}
+          <DateCard id="acColDateTime" title={acColDateTimeProps() ? acColDateTimeProps().Title : ''} displayMode={displayMode}
                     required={acColDateTimeProps() ? acColDateTimeProps().Required : false} itemHandle={acColDateTimeHandle} dateonly={false}/>
-          <CheckboxCard id="acColCheck" title={acColCheckProps() ? acColCheckProps().Title : ''} displayMode={props.displayMode}
+          <CheckboxCard id="acColCheck" title={acColCheckProps() ? acColCheckProps().Title : ''} displayMode={displayMode}
                       required={acColCheckProps() ? acColCheckProps().Required : false} itemHandle={acColCheckHandle}/>
-          <ToggleButtonCard  id="acColToggle" title={acColToggleProps() ? acColToggleProps().Title : ''} displayMode={props.displayMode}
+          <ToggleButtonCard  id="acColToggle" title={acColToggleProps() ? acColToggleProps().Title : ''} displayMode={displayMode}
                       required={acColToggleProps() ? acColToggleProps().Required : false} itemHandle={acColToggleHandle}/>
-          <SelectCard id="acColOutcome" title={acColOutcomeProps() ? acColOutcomeProps().Title : ''} displayMode={props.displayMode}
+          <SelectCard id="acColOutcome" title={acColOutcomeProps() ? acColOutcomeProps().Title : ''} displayMode={displayMode}
                       required={acColOutcomeProps() ? acColOutcomeProps().Required : false} itemHandle={acColOutcomeHandle}
                       choices={acColOutcomeChoices} selected={acColOutcomeSelected}/>
-          <SelectMultiCard id="acColPerson" title={acColPersonProps ? acColPersonProps.Title : ''} displayMode={props.displayMode}
+          <SelectMultiCard id="acColPerson" title={acColPersonProps ? acColPersonProps.Title : ''} displayMode={displayMode}
                       required={acColPersonProps ? acColPersonProps.Required : false} itemHandle={acColPersonHandle}
                       choices={acColPersonChoices} selected={acColPersonSelected}/>
-          <SelectCard id="acColGroup" title={acColGroupProps ? acColGroupProps.Title : ''} displayMode={props.displayMode}
+          <SelectCard id="acColGroup" title={acColGroupProps ? acColGroupProps.Title : ''} displayMode={displayMode}
                       required={acColGroupProps ? acColGroupProps.Required : false} itemHandle={acColGroupHandle}
                       choices={acColGroupChoices} selected={acColGroupSelected}/>
-          <UrlCard id="acColHyperlink" title={acColHyperlinkProps() ? acColHyperlinkProps().Title : ''} displayMode={props.displayMode}
+          <UrlCard id="acColHyperlink" title={acColHyperlinkProps() ? acColHyperlinkProps().Title : ''} displayMode={displayMode}
                       required={acColHyperlinkProps() ? acColHyperlinkProps().Required : false} itemHandle={acColHyperlinkHandle}/>
-          <ImgCard id="acColPicture" title={acColPictureProps() ? acColPictureProps().Title : ''} displayMode={props.displayMode}
+          <ImgCard id="acColPicture" title={acColPictureProps() ? acColPictureProps().Title : ''} displayMode={displayMode}
                       required={acColPictureProps() ? acColPictureProps().Required : false} itemHandle={acColPictureHandle}/>
         </div>
-        {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
+        {displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type="button" className='button button-blue' onClick={() => {
           //console.log(cols)

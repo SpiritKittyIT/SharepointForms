@@ -45,7 +45,7 @@ const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHand
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div id={id}>
+        <div id={id} className='card-input-d'>
           <a href={itemHandle?.value?.Url}>{itemHandle?.value?.Description}</a>
         </div>
       </div>

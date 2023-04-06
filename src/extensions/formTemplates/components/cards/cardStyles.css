@@ -85,9 +85,10 @@
   overflow: hidden;
   position: absolute;
   display: none;
+  z-index: 1;
 }
   
-.card-select-dropdown.active {
+.active {
   display: block;
 }
 
@@ -252,12 +253,12 @@ input[type=number]::-webkit-inner-spin-button {
   padding: 0.5rem;
   flex-flow: column wrap;
   width: 30%;
-  height: 15rem;
+  height: 14.7rem;
   color: rgb(33, 33, 33);
 }
 
 .card-image-display {
-  height: 11.35rem;
+  height: 11.05rem;
 }
 
 .card-image-img {
@@ -276,8 +277,94 @@ input[type=number]::-webkit-inner-spin-button {
   position: absolute;
   display: none;
   top: 12rem;
+  z-index: 1;
 }
-  
-.card-image-dropdown.active {
-  display: block;
+
+.card-filter-selected-d {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0.25rem 0 0 0.25rem;
+  min-height: 1.55rem;
+  background: #e4e4e4;
+}
+.card-dropdown-input-d{
+  padding: 0.25rem 0 0 0.25rem;
+  line-height: 1.2rem;
+  height: 1.55rem;
+  border: solid 1px rgb(118, 118, 118);
+  color: rgb(33, 33, 33);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  flex-wrap: wrap;
+  background: #e4e4e4;
+}
+
+.card-input-d {
+  padding: 0.3rem;
+  line-height: 1.2rem;
+  border: solid 1px rgb(118, 118, 118);
+  color: rgb(33, 33, 33);
+  min-height: 1.2rem;
+  background: #e4e4e4;
+}
+
+.card-toggle-slider-d {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #e4e4e4;
+  border-radius: 30px;
+  border: 1px solid #727272d2;
+}
+
+.card-toggle-slider-d:before {
+  position: absolute;
+  content: "";
+  height: 0.9rem;
+  width: 0.9rem;
+  border-radius: 20px;
+  left: 0.3rem;
+  bottom: 0.15rem;
+  background: #ffffff;
+  transition: 0.4s;
+}
+
+.card-checkbox-input:checked ~ .card-toggle-slider-d {
+  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+}
+
+.card-checkbox-input:checked ~ .card-toggle-slider-d:before {
+  transform: translateX(1rem);
+}
+
+.card-checkbox-checkmark-d {
+  height: 1.3rem;
+  width: 1.3rem;
+  background: #e4e4e4;
+  border: 1px solid #727272d2;
+  border-radius: 5px;
+}
+
+.card-checkbox-checkmark-d:after {
+  content: "";
+  position: absolute;
+}
+
+.card-checkbox-input:checked ~ .card-checkbox-checkmark-d {
+  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+}
+
+.card-checkbox-input:checked ~ .card-checkbox-checkmark-d:after {
+  left: 0.5rem;
+  top: 0.3rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  border: solid rgb(255, 255, 255);
+  border-width: 0 0.15rem 0.15rem 0;
+  transform: rotate(45deg);
 }

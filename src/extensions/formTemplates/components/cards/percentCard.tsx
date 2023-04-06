@@ -26,7 +26,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {`${title} %`}
         </label>
-        <div>{itemHandle.value} %</div>
+        <div id={id} className='card-input-d'>{itemHandle.value} %</div>
       </div>
     )
     : (

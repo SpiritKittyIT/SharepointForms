@@ -24,7 +24,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div>{itemHandle.value}</div>
+        <div id={id} className='card-input-d'>{itemHandle.value}</div>
       </div>
     )
     : (

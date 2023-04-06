@@ -31,7 +31,7 @@ const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, 
             disabled={true}
             {...(itemHandle?.value  ? { checked: true } : {})}
           />
-          <div className="card-toggle-slider" />
+          <div className="card-toggle-slider-d" />
         </label>
       </div>
     )

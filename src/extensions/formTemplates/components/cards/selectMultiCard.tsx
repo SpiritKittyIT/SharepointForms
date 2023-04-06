@@ -67,7 +67,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
-          <div className={`card-dropdown-input ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+          <div className={`card-dropdown-input-d ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             { chosen.length > 0
               ? chosen.map((item) => {return (
                 <div key={item.Id} className='card-selected'>
@@ -77,7 +77,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                 : `Select ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+            <div className={`card-filter-selected-d ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
               { chosen.length > 0
                 ? chosen.map((item) => {return (
                   <div key={item.Id} className='card-selected'>

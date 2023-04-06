@@ -23,7 +23,7 @@ const DateCard: React.FC<IDateCard> = ({id, title, displayMode, required, itemHa
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div>{itemHandle?.value?.replace(new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z"), "$3.$2.$1 $4:$5")}</div>
+        <div id={id} className='card-input-d'>{itemHandle?.value?.replace(new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z"), "$3.$2.$1 $4:$5")}</div>
       </div>
     )
     : (

@@ -31,7 +31,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
             disabled={true}
             {...(itemHandle?.value  ? { checked: true } : {})}
           />
-          <div className="card-checkbox-checkmark" />
+          <div className="card-checkbox-checkmark-d" />
         </label>
       </div>
     )

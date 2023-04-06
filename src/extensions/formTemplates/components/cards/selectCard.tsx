@@ -50,16 +50,16 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
-          <div className={`card-dropdown-input ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            {chosen
+          <div className={`card-dropdown-input-d ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+            { chosen
               ? <div className='card-selected'>
                   <div className='card-selected-value'>{getDisplayText(chosen)}</div>
                 </div>
-                : `Select ${title}...`}
+              : `Select ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-              {chosen
+            <div className={`card-filter-selected-d ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+              { chosen
                 ? <div className='card-selected'>
                     <div className='card-selected-value'>{getDisplayText(chosen)}</div>
                   </div>

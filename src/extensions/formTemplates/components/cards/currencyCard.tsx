@@ -27,7 +27,7 @@ const CurrencyCard: React.FC<ICurrencyCard> = ({id, title, currencySymbol, displ
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {`${title} ${currencySymbol}`}
         </label>
-        <div>{itemHandle.value} {currencySymbol}</div>
+        <div id={id} className='card-input-d'>{itemHandle.value} {currencySymbol}</div>
       </div>
     )
     : (
