@@ -1,34 +1,51 @@
-import { FormDisplayMode } from '@microsoft/sp-core-library';
-import * as React from 'react';
+import { FormDisplayMode } from '@microsoft/sp-core-library'
+import * as React from 'react'
 
 interface IDateCard {
     id: string
-    colProps: IColProps
+    title: string
     displayMode: FormDisplayMode
-    itemHandle: IHandle<{[key: string]:string}>
+    required: boolean
+    itemHandle: IHandle<string>
+    dateonly: boolean
+    valueVerify?: (value: string) => string
 }
 
-const DateCard: React.FC<IDateCard> = ({id, colProps, displayMode, itemHandle}) => {
+const DateCard: React.FC<IDateCard> = ({id, title, displayMode, required, itemHandle, dateonly, valueVerify = (value) => {return ''}}) => {
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
+
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    itemHandle.setValue({
-      ...itemHandle.value,
-      [event.target.id]: colProps?.DisplayFormat ? `${event.target.value}Z` : `${event.target.value}T00:00:00Z`,
-    })
+    setErrorMessage(valueVerify(event.target.value))
+    itemHandle.setValue(dateonly ? `${event.target.value}Z` : `${event.target.value}T00:00:00Z`)
   }
 
-  return (
-    <div className='card'>
-      <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
-      <input
-        className='card-input'
-        id={id}
-        type={colProps?.DisplayFormat ? "datetime-local" : "date"}
-        value={colProps?.DisplayFormat ? itemHandle?.value[id]?.split('Z')[0] : itemHandle?.value[id]?.split('T')[0]}
-        onChange={onChange}
-        {...(displayMode === FormDisplayMode.Display ? { disabled: true } : {})}
-      />
-    </div>
-  )
+  try {
+    return displayMode === FormDisplayMode.Display ? (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
+        <div>{itemHandle?.value?.replace(new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z"), "$3.$2.$1 $4:$5")}</div>
+      </div>
+    )
+    : (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
+        <input
+          className='card-input'
+          id={id}
+          type={dateonly ? "date" : "datetime-local"}
+          value={dateonly ? itemHandle?.value?.split('T')[0] : itemHandle?.value?.split('Z')[0]}
+          onChange={onChange}
+        />
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
+      </div>
+    )
+  }
+  catch (error) {
+    console.error(error)
+    return (
+      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+    )
+  }
 };
 
 export default DateCard;

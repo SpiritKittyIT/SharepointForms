@@ -8,18 +8,18 @@ import Error from './error';
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
 import { isNull } from 'lodash';
-import CurrencyCard from './cardsGeneric/currencyCard';
+import CurrencyCard from './cards/currencyCard';
 import { localeCurrencies } from '../loc/dictionaries';
-import NumberCard from './cardsGeneric/numberCard';
-import PercentCard from './cardsGeneric/percentCard';
-import TextCard from './cardsGeneric/textCard';
-import SelectCard from './cardsGeneric/selectCard';
-import DateCard from './cardsGeneric/dateCard';
-import SelectMultiCard from './cardsGeneric/selectMultiCard';
-import CheckboxCard from './cardsGeneric/checkboxCard';
-import ToggleButtonCard from './cardsGeneric/toggleButtonCard';
-import UrlCard from './cardsGeneric/urlCard';
-import ImgCard from './cardsGeneric/imgCard';
+import NumberCard from './cards/numberCard';
+import PercentCard from './cards/percentCard';
+import TextCard from './cards/textCard';
+import SelectCard from './cards/selectCard';
+import DateCard from './cards/dateCard';
+import SelectMultiCard from './cards/selectMultiCard';
+import CheckboxCard from './cards/checkboxCard';
+import ToggleButtonCard from './cards/toggleButtonCard';
+import UrlCard from './cards/urlCard';
+import ImgCard from './cards/imgCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;

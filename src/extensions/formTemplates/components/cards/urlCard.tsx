@@ -1,58 +1,103 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library';
 import * as React from 'react';
-import { localeCurrencies } from '../../loc/dictionaries';
 
 interface IUrlCard {
-    id: string
-    colProps: IColProps
-    displayMode: FormDisplayMode
-    itemHandle: IHandle<{[key: string]:{Description: string, Url: string}}>
+  id: string
+  title: string
+  displayMode: FormDisplayMode
+  required: boolean
+  itemHandle: IHandle<{Description: string, Url: string}>
+  valueVerify?: (value: {Description: string, Url: string}) => string
 }
 
-const UrlCard: React.FC<IUrlCard> = ({id, colProps, displayMode, itemHandle}) => {
+function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: boolean) => void): void { // eslint-disable-line @typescript-eslint/no-explicit-any
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent): void {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setActive(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
+
+const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
+  const wrapperRef = React.useRef(null)
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [active, setActive] = React.useState<boolean>(false)
+
+  useOutsideHider(wrapperRef, setActive)
+
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    itemHandle.setValue({
-      ...itemHandle.value,
-      [id]: event.target.id.indexOf("URL") === 0 ? {Description: itemHandle.value[id].Description, Url: event.target.value} : {Description: event.target.value, Url: itemHandle.value[id].Url}
-    })
+    const newVal = event.target.id.indexOf("URL") === 0
+                    ? {Description: itemHandle.value.Description, Url: event.target.value}
+                    : {Description: event.target.value, Url: itemHandle.value.Url}
+    setErrorMessage(valueVerify(newVal))
+    itemHandle.setValue(newVal)
   }
 
-  return (
-    <div className='card'>
-      <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>
-        {colProps?.Title ? `${colProps.Title}${colProps.ShowAsPercentage ? " %" : ""}${colProps.CurrencyLocaleId ? ` (${localeCurrencies[colProps.CurrencyLocaleId].symbol})` : ""}` : ""}
-      </label>
-      <div id={id}>
-        { colProps?.DisplayFormat === 1
-          ? <img src={itemHandle?.value[id]?.Url} alt={itemHandle?.value[id]?.Description} />
-          : <a href={itemHandle?.value[id]?.Url}>{itemHandle?.value[id]?.Description}</a>}
-        <div>
-          <label htmlFor={`Description-${id}`} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>
-            {colProps?.Title ? `${colProps.Title}${colProps.ShowAsPercentage ? " %" : ""}${colProps.CurrencyLocaleId ? ` (${localeCurrencies[colProps.CurrencyLocaleId].symbol})` : ""}` : ""}
-          </label>
-          <input
-            className='card-input'
-            id={`Description-${id}`}
-            type="text"
-            value={itemHandle?.value[id]?.Description}
-            onChange={onChange}
-            {...(displayMode === FormDisplayMode.Display ? { disabled: true } : {})}
-          />
-          <label htmlFor={`URL-${id}`} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>
-            {colProps?.Title ? `${colProps.Title}${colProps.ShowAsPercentage ? " %" : ""}${colProps.CurrencyLocaleId ? ` (${localeCurrencies[colProps.CurrencyLocaleId].symbol})` : ""}` : ""}
-          </label>
-          <input
-            className='card-input'
-            id={`URL-${id}`}
-            type="text"
-            value={itemHandle?.value[id]?.Url}
-            onChange={onChange}
-            {...(displayMode === FormDisplayMode.Display ? { disabled: true } : {})}
-          />
+  try {
+    return displayMode === FormDisplayMode.Display ? (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
+          {title}
+        </label>
+        <div id={id}>
+          <a href={itemHandle?.value?.Url}>{itemHandle?.value?.Description}</a>
         </div>
       </div>
-    </div>
-  )
+    )
+    : (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
+          {title}
+        </label>
+        <div id={id} ref={wrapperRef} className="card-select-menu">
+          <div className='card-input' onClick={(event) => {setActive(!active)}}>
+            <a href={itemHandle?.value?.Url} onClick={(event) => {event.stopPropagation()}} >{itemHandle?.value?.Description}</a>
+          </div>
+          {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
+          <div className={`card-select-dropdown ${active ? 'active' : ''}`} onClick={(event) => {setActive(!active)}}>
+            <div className={`card-url-input-wrapper`} >
+              <label htmlFor={`Description-${id}`} className={`card-label ${required ? 'card-required' : ''}`}>
+                Description:
+              </label>
+              <input
+                className='card-url-input'
+                id={`Description-${id}`}
+                type="text"
+                value={itemHandle?.value?.Description}
+                onChange={onChange}
+                onClick={(event) => {event.stopPropagation()}}
+              />
+            </div>
+            <div className={`card-url-input-wrapper`} >
+              <label htmlFor={`URL-${id}`} className={`card-label ${required ? 'card-required' : ''}`}>
+                URL:
+              </label>
+              <input
+                className='card-url-input'
+                id={`URL-${id}`}
+                type="text"
+                value={itemHandle?.value?.Url}
+                onChange={onChange}
+                onClick={(event) => {event.stopPropagation()}}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  catch (error) {
+    console.error(error)
+    return (
+      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+    )
+  }
 };
 
 export default UrlCard;

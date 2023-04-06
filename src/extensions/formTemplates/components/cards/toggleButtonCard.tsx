@@ -3,35 +3,61 @@ import * as React from 'react';
 
 interface IToggleButtonCard {
   id: string
-  colProps: IColProps
+  title: string
   displayMode: FormDisplayMode
-  itemHandle: IHandle<{[key: string]:boolean}>
+  required: boolean
+  itemHandle: IHandle<boolean>
+  valueVerify?: (value: boolean) => string
 }
 
-const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, colProps, displayMode, itemHandle}) => {
+const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
+
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    itemHandle.setValue({
-      ...itemHandle.value,
-      [event.target.id]: event.target.checked,
-    })
+    setErrorMessage(valueVerify(event.target.checked))
+    itemHandle.setValue(event.target.checked)
   }
 
-  return (
-    <div className='card'>
-      <label htmlFor={id} className={`card-label ${colProps?.Required ? 'card-required' : ''}`}>{colProps?.Title ? colProps.Title : ""}</label>
-      <label className="card-toggle-cover">
-        <input
-          id={id}
-          className='card-checkbox-input'
-          type="checkbox"
-          onChange={onChange}
-          {...(itemHandle?.value[id]  ? { checked: true } : {})}
-          {...(displayMode === FormDisplayMode.Display ? { disabled: true } : {})}
-        />
-        <div className="card-toggle-slider" />
-      </label>
-    </div>
-  )
+  try {
+    return displayMode === FormDisplayMode.Display ? (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
+        <label className="card-toggle-cover">
+          <input
+            id={id}
+            className='card-checkbox-input'
+            type="checkbox"
+            onChange={onChange}
+            disabled={true}
+            {...(itemHandle?.value  ? { checked: true } : {})}
+          />
+          <div className="card-toggle-slider" />
+        </label>
+      </div>
+    )
+    : (
+      <div className='card'>
+        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
+        <label className="card-toggle-cover">
+          <input
+            id={id}
+            className='card-checkbox-input'
+            type="checkbox"
+            onChange={onChange}
+            {...(itemHandle?.value  ? { checked: true } : {})}
+          />
+          <div className="card-toggle-slider" />
+        </label>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
+      </div>
+    )
+  }
+  catch (error) {
+    console.error(error)
+    return (
+      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+    )
+  }
 };
 
 export default ToggleButtonCard;
