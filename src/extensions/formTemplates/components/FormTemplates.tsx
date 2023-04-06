@@ -19,6 +19,7 @@ import SelectMultiCard from './cardsGeneric/selectMultiCard';
 import CheckboxCard from './cardsGeneric/checkboxCard';
 import ToggleButtonCard from './cardsGeneric/toggleButtonCard';
 import UrlCard from './cardsGeneric/urlCard';
+import ImgCard from './cardsGeneric/imgCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -421,6 +422,15 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColHyperlinkHandle = {value: item["acColHyperlink"], setValue: acColHyperlinkSet}
 
+    const acColPictureProps = () => {return getColProps("acColPicture", cols)}
+    const acColPictureSet = (value: {Description: string, Url: string}) => {
+      setItem({
+        ...item,
+        ["acColPicture"]: value,
+      })
+    }
+    const acColPictureHandle = {value: item["acColPicture"], setValue: acColPictureSet}
+
     /* eslint-enable */
   //#endregion
 
@@ -464,6 +474,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
                       choices={acColGroupChoices} selected={acColGroupSelected}/>
           <UrlCard id="acColHyperlink" title={acColHyperlinkProps() ? acColHyperlinkProps().Title : ''} displayMode={props.displayMode}
                       required={acColHyperlinkProps() ? acColHyperlinkProps().Required : false} itemHandle={acColHyperlinkHandle}/>
+          <ImgCard id="acColPicture" title={acColPictureProps() ? acColPictureProps().Title : ''} displayMode={props.displayMode}
+                      required={acColPictureProps() ? acColPictureProps().Required : false} itemHandle={acColPictureHandle}/>
         </div>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>

@@ -81,7 +81,7 @@
   border: solid 1px rgb(118, 118, 118);
   background-color: rgb(255, 255, 255);
   color: #2f3640;
-  width: 100%;
+  width: calc(100% - 0.1rem);
   overflow: hidden;
   position: absolute;
   display: none;
@@ -230,16 +230,6 @@ input[type=number]::-webkit-inner-spin-button {
   color: rgb(255, 0, 0);
 }
 
-.card-url-dropdown {
-  border: solid 1px rgb(118, 118, 118);
-  background-color: rgb(255, 255, 255);
-  color: #2f3640;
-  width: 100%;
-  overflow: hidden;
-  position: absolute;
-  display: none;
-}
-
 .card-url-input-wrapper{
   width: 100%;
   margin: 0.2rem;
@@ -255,4 +245,39 @@ input[type=number]::-webkit-inner-spin-button {
   line-height: 1rem;
   border: solid 1px rgb(118, 118, 118);
   color: rgb(33, 33, 33);
+}
+
+.card-image {
+  display: flex;
+  padding: 0.5rem;
+  flex-flow: column wrap;
+  width: 30%;
+  height: 15rem;
+  color: rgb(33, 33, 33);
+}
+
+.card-image-display {
+  height: 11.35rem;
+}
+
+.card-image-img {
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  display: block;
+}
+
+.card-image-dropdown {
+  border: solid 1px rgb(118, 118, 118);
+  background-color: rgb(255, 255, 255);
+  color: #2f3640;
+  width: calc(100% - 0.1rem);
+  overflow: hidden;
+  position: absolute;
+  display: none;
+  top: 12rem;
+}
+  
+.card-image-dropdown.active {
+  display: block;
 }
