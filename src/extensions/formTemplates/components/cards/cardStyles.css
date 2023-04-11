@@ -50,6 +50,7 @@
   display: flex;
   width: 100%;
   flex-direction: column;
+  background-color: var(--white);
 }
 
 .card-filter-selected {
@@ -77,12 +78,13 @@
 
 .card-select-dropdown {
   border: solid 1px var(--gray5);
-  background-color: var(--white);
   width: calc(100% - 0.1rem);
   overflow: hidden;
   position: absolute;
   display: none;
   z-index: 1;
+  box-shadow: 0 0 1rem var(--transparent-black);
+  background-color: var(--white);
 }
 
 .card-selected {
@@ -261,13 +263,14 @@ input[type=number]::-webkit-inner-spin-button {
 
 .card-image-dropdown {
   border: solid 1px var(--gray5);
-  background-color: var(--white);
   width: calc(100% - 0.1rem);
   overflow: hidden;
   position: absolute;
   display: none;
   top: 11.7rem;
   z-index: 1;
+  box-shadow: 0 0 1rem var(--transparent-black);
+  background-color: var(--white);
 }
 
 .card-filter-selected-d {
