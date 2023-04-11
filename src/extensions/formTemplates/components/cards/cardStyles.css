@@ -224,10 +224,12 @@ input[type=number]::-webkit-inner-spin-button {
 
 .card-error {
   color: var(--red);
+  height: 1.17rem;
+  overflow: hidden;
 }
 
 .card-url-input-wrapper{
-  width: 100%;
+  width: calc(100% - 0.4rem);
   margin: 0.2rem;
 }
 
@@ -236,13 +238,13 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .card-url-input{
-  width: calc(100% - 1rem);
+  width: calc(100% - 0.6rem);
   padding: 0.25rem;
   line-height: 1rem;
   border: solid 1px var(--gray5);
 }
 
-.card-image {
+.card-tall {
   display: flex;
   padding: 0.5rem;
   flex-flow: column wrap;
@@ -250,18 +252,18 @@ input[type=number]::-webkit-inner-spin-button {
   height: 14.7rem;
 }
 
-.card-image-display {
-  height: 11.05rem;
+.card-tall-display {
+  height: 11rem;
 }
 
-.card-image-img {
+.card-tall-img {
   max-width: 100%;
   max-height: 100%;
   margin: auto;
   display: block;
 }
 
-.card-image-dropdown {
+.card-tall-dropdown {
   border: solid 1px var(--gray5);
   width: calc(100% - 0.1rem);
   overflow: hidden;
@@ -358,6 +360,18 @@ input[type=number]::-webkit-inner-spin-button {
   border: solid var(--white);
   border-width: 0 0.15rem 0.15rem 0;
   transform: rotate(45deg);
+}
+
+textarea {
+  resize: none;
+}
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: var(--gray7);
 }
   
 .active {

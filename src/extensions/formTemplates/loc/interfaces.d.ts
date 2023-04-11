@@ -15,6 +15,7 @@ declare interface IColProps {
   CurrencyLocaleId?: number
   DisplayFormat?: number
   SelectionGroup?: number
+  NumberOfLines?: number
 }
 
 declare interface IHandle<T> {

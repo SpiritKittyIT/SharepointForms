@@ -20,6 +20,7 @@ import CheckboxCard from './cards/checkboxCard';
 import ToggleButtonCard from './cards/toggleButtonCard';
 import UrlCard from './cards/urlCard';
 import ImgCard from './cards/imgCard';
+import TextMultiLineCard from './cards/textMultiLineCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -431,6 +432,30 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColPictureHandle = {value: item["acColPicture"], setValue: acColPictureSet}
 
+    const [acColMultiPlainProps, acColMultiPlainPropsSet] = React.useState<IColProps>()
+    React.useEffect(() => {
+      acColMultiPlainPropsSet(getColProps("acColMultiPlain", cols))
+    }, [cols])
+    const acColMultiPlainSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColMultiPlain"]: value,
+      })
+    }
+    const acColMultiPlainVerify = (value: string) => {
+      const lines = value.split('\n')
+      if (lines.length > acColMultiPlainProps.NumberOfLines){
+        return `acColMultiPlain can only contain ${acColMultiPlainProps.NumberOfLines} lines of text`
+      }
+      for (let index = 0; index < lines.length; index++) {
+        if(lines[index].length > 255){
+          return `Line ${index + 1} is too long, can only contain 255 characters`
+        }
+      }
+      return ''
+    }
+    const acColMultiPlainHandle = {value: item["acColMultiPlain"], setValue: acColMultiPlainSet}
+
     const displayMode = props.displayMode
 
     /* eslint-enable */
@@ -478,6 +503,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
                 required={acColHyperlinkProps() ? acColHyperlinkProps().Required : false} itemHandle={acColHyperlinkHandle}/>
           <ImgCard id="acColPicture" title={acColPictureProps() ? acColPictureProps().Title : ''} displayMode={displayMode}
                 required={acColPictureProps() ? acColPictureProps().Required : false} itemHandle={acColPictureHandle}/>
+          <TextMultiLineCard id="acColMultiPlain" title={acColMultiPlainProps ? acColMultiPlainProps.Title : ''} displayMode={displayMode}
+                required={acColMultiPlainProps ? acColMultiPlainProps.Required : false} itemHandle={acColMultiPlainHandle} valueVerify={acColMultiPlainVerify}/>
         </div>
         {displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>

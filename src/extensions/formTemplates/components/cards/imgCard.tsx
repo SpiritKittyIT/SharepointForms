@@ -41,26 +41,26 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
 
   try {
     return displayMode === FormDisplayMode.Display ? (
-      <div className='card-image'>
+      <div className='card-tall'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div id={id} className='card-input-d card-image-display'>
-          <img className='card-image-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
+        <div id={id} className='card-input-d card-tall-display'>
+          <img className='card-tall-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
         </div>
       </div>
     )
     : (
-      <div className='card-image'>
+      <div className='card-tall'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
-          <div className='card-input card-image-display' onClick={(event) => {setActive(!active)}}>
-            <img className='card-image-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
+          <div className='card-input card-tall-display' onClick={(event) => {setActive(!active)}}>
+            <img className='card-tall-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
           </div>
           {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
-          <div className={`card-image-dropdown ${active ? 'active' : ''}`}>
+          <div className={`card-tall-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-url-input-wrapper`} >
               <label htmlFor={`Description-${id}`} className={`card-label ${required ? 'card-required' : ''}`}>
                 Description:
