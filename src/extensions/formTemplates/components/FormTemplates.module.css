@@ -1,3 +1,56 @@
+:root {
+  --red: rgb(255, 59, 48);
+  --orange: rgb(255, 149, 0);
+  --yellow: rgb(255, 204, 0);
+  --green: rgb(52, 199, 89);
+  --mint: rgb(0, 199, 190);
+  --teal: rgb(48, 176, 199);
+  --powder: rgb(176, 224, 230);
+  --cyan: rgb(50, 173, 230);
+  --blue: rgb(0, 122, 255);
+  --indigo: rgb(88, 86, 214);
+  --purple: rgb(175, 82, 222);
+  --pink: rgb(255, 45, 85);
+  --brown: rgb(162, 132, 94);
+  --white: rgb(255, 253, 250);
+  --gray0: rgb(242, 242, 247);
+  --gray1: rgb(229, 229, 234);
+  --gray2: rgb(209, 209, 214);
+  --gray3: rgb(199, 199, 204);
+  --gray4: rgb(174, 174, 178);
+  --gray5: rgb(142, 142, 147);
+  --gray6: rgb(99, 99, 102);
+  --gray7: rgb(72, 72, 74);
+  --gray8: rgb(58, 58, 60);
+  --gray9: rgb(44, 44, 46);
+  --black: rgb(28, 28, 30);
+  
+  --transparent-red: rgba(255, 59, 48, 0.4);
+  --transparent-orange: rgba(255, 149, 0, 0.4);
+  --transparent-yellow: rgba(255, 204, 0, 0.4);
+  --transparent-green: rgba(52, 199, 89, 0.4);
+  --transparent-mint: rgba(0, 199, 190, 0.4);
+  --transparent-teal: rgba(48, 176, 199, 0.4);
+  --transparent-cyan: rgba(50, 173, 230, 0.4);
+  --transparent-blue: rgba(0, 122, 255, 0.4);
+  --transparent-indigo: rgba(88, 86, 214, 0.4);
+  --transparent-purple: rgba(175, 82, 222, 0.4);
+  --transparent-pink: rgba(255, 45, 85, 0.4);
+  --transparent-brown: rgba(162, 132, 94, 0.4);
+  --transparent-white: rgba(255, 253, 250, 0.4);
+  --transparent-gray0: rgba(242, 242, 247, 0.4);
+  --transparent-gray1: rgba(229, 229, 234, 0.4);
+  --transparent-gray2: rgba(209, 209, 214, 0.4);
+  --transparent-gray3: rgba(199, 199, 204, 0.4);
+  --transparent-gray4: rgba(174, 174, 178, 0.4);
+  --transparent-gray5: rgba(142, 142, 147, 0.4);
+  --transparent-gray6: rgba(99, 99, 102, 0.4);
+  --transparent-gray7: rgba(72, 72, 74, 0.4);
+  --transparent-gray8: rgba(58, 58, 60, 0.4);
+  --transparent-gray9: rgba(44, 44, 46, 0.4);
+  --transparent-black: rgba(28, 28, 30, 0.4);
+}
+
 .formTemplates {
   background-color: "[theme:white, default:#ffffff]";
   color: "[theme:themePrimary, default:#0078d4]";
@@ -12,74 +65,109 @@
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: var(--transparent-black); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .modal-content {
-  background-color: #fefefe;
+  background-color: var(--white);
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--gray5);
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
 .button {
   padding: 0.5rem 1.1rem;
   margin: 0.5rem;
-  border: 0;
+  border: none;
   border-radius: 100px;
   font-weight: Bold;
   transition: all 0.5s;
   -webkit-transition: all 0.5s;
+  cursor: pointer;
 }
 
 .button:hover {
-  box-shadow: 0 0 1rem #6fc5ff50;
+  box-shadow: 0 0 1rem var(--transparent-gray5);
 }
 
 .button:active {
   transition: all 0.25s;
   -webkit-transition: all 0.25s;
-  box-shadow: none;
-}
-
-.button-blue {
-  background-color: #2ba8fb;
-  color: #ffffff;
-}
-
-.button-blue:hover {
-  background-color: #6fc5ff;
-}
-
-.button-blue:active {
-  background-color: #3d94cf;
+  box-shadow: 0 0 1rem var(--transparent-black);
 }
 
 .button-red {
-  background-color: #f83868;
-  color: #ffffff;
+  background-color: var(--red);
+  color: var(--white);
 }
 
-.button-red:hover {
-  background-color: #fd507b;
+.button-orange {
+  background-color: var(--orange);
+  color: var(--white);
 }
 
-.button-red:active {
-  background-color: #e92959;
+.button-yellow {
+  background-color: var(--yellow);
+  color: var(--white);
 }
 
 .button-green {
-  background-color: #2bfba8fb;
-  color: #ffffff;
+  background-color: var(--green);
+  color: var(--white);
 }
 
-.button-green:hover {
-  background-color: #6fffc5ff;
+.button-mint {
+  background-color: var(--mint);
+  color: var(--white);
 }
 
-.button-green:active {
-  background-color: #3dcf94cf;
+.button-teal {
+  background-color: var(--teal);
+  color: var(--white);
+}
+
+.button-cyan {
+  background-color: var(--cyan);
+  color: var(--white);
+}
+
+.button-blue {
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+.button-indigo {
+  background-color: var(--indigo);
+  color: var(--white);
+}
+
+.button-purple {
+  background-color: var(--purple);
+  color: var(--white);
+}
+
+.button-pink {
+  background-color: var(--pink);
+  color: var(--white);
+}
+
+.button-brown {
+  background-color: var(--brown);
+  color: var(--white);
+}
+
+.button-white {
+  background-color: var(--white);
+  color: var(--black);
+  padding: 0.47rem 1.07rem;
+  border: 1px solid var(--gray5);
+}
+
+.button-black {
+  background-color: var(--black);
+  color: var(--white);
+  padding: 0.47rem 1.07rem;
+  border: 1px solid var(--gray5);
 }

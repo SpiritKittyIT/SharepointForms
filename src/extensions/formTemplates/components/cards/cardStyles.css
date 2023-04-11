@@ -10,7 +10,7 @@
   flex-flow: column wrap;
   width: 30%;
   height: 4.9rem;
-  color: rgb(33, 33, 33);
+  color: var(--black);
 }
 
 .card-label {
@@ -21,8 +21,7 @@
 .card-input {
   padding: 0.3rem;
   line-height: 1.2rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
+  border: solid 1px var(--gray5);
   min-height: 1.2rem;
 }
 
@@ -35,8 +34,7 @@
   padding: 0.25rem 0 0 0.25rem;
   line-height: 1.2rem;
   height: 1.55rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
+  border: solid 1px var(--gray5);
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -44,7 +42,7 @@
 }
 
 .placeholder {
-  color: rgb(118, 118, 118);
+  color: var(--gray5);
 }
 
 .card-select-menu {
@@ -59,7 +57,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   padding: 0.25rem 0 0 0.25rem;
-  border-bottom: solid 1px rgb(118, 118, 118);
+  border-bottom: solid 1px var(--gray5);
   min-height: 1.55rem;
 }
   
@@ -68,35 +66,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: solid 1px rgb(118, 118, 118);
+  border-bottom: solid 1px var(--gray5);
 }
 
 .card-select-input {
   height: calc(100% - 0.5rem);
   width: calc(100% - 0.7rem);
-  border: dashed 2px rgb(118, 118, 118);
+  border: dashed 2px var(--gray5);
 }
 
 .card-select-dropdown {
-  border: solid 1px rgb(118, 118, 118);
-  background-color: rgb(255, 255, 255);
-  color: #2f3640;
+  border: solid 1px var(--gray5);
+  background-color: var(--white);
   width: calc(100% - 0.1rem);
   overflow: hidden;
   position: absolute;
   display: none;
   z-index: 1;
 }
-  
-.active {
-  display: block;
-}
 
 .card-selected {
   display: flex;
   flex-direction: row;
-  background-color: #bef3f3;
-  border: solid 1px #2f3640;
+  background-color: var(--powder);
+  border: solid 1px var(--gray5);
   width: fit-content;
   height: fit-content;
   margin: 0 0.25rem 0.25rem 0;
@@ -107,7 +100,7 @@
 }
 
 .card-selected-unselect {
-  border-left: solid 1px #2f3640;
+  border-left: solid 1px var(--gray5);
   padding: 0 0.2rem;
   cursor: pointer;
 }
@@ -122,7 +115,7 @@
 }
 
 .card-select-options::-webkit-scrollbar-thumb {
-  background: #525861;
+  background: var(--gray7);
 }
 
 .option {
@@ -138,7 +131,7 @@
 }
 
 .option:hover {
-  background: #c4c4c4;
+  background: var(--gray2);
 }
 
 input[type=number]::-webkit-outer-spin-button,
@@ -152,7 +145,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .card-checkbox-input:checked ~ .card-checkbox-checkmark {
-  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+  background: var(--green);
 }
 
 .card-checkbox-checkmark:after {
@@ -165,7 +158,7 @@ input[type=number]::-webkit-inner-spin-button {
   top: 0.25rem;
   width: 0.25rem;
   height: 0.5rem;
-  border: solid rgb(255, 255, 255);
+  border: solid var(--white);
   border-width: 0 0.15rem 0.15rem 0;
   transform: rotate(45deg);
 }
@@ -179,7 +172,7 @@ input[type=number]::-webkit-inner-spin-button {
 .card-checkbox-checkmark {
   height: 1.3rem;
   width: 1.3rem;
-  background: #727272d2;
+  background: var(--gray6);
   border-radius: 5px;
 }
 
@@ -203,7 +196,7 @@ input[type=number]::-webkit-inner-spin-button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #727272d2;
+  background: var(--gray6);
   border-radius: 30px;
 }
 
@@ -215,12 +208,12 @@ input[type=number]::-webkit-inner-spin-button {
   border-radius: 20px;
   left: 0.3rem;
   bottom: 0.2rem;
-  background: rgb(255, 255, 255);
+  background: var(--white);
   transition: 0.4s;
 }
 
 .card-checkbox-input:checked ~ .card-toggle-slider {
-  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+  background: var(--green);
 }
 
 .card-checkbox-input:checked ~ .card-toggle-slider:before {
@@ -228,7 +221,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .card-error {
-  color: rgb(255, 0, 0);
+  color: var(--red);
 }
 
 .card-url-input-wrapper{
@@ -244,8 +237,7 @@ input[type=number]::-webkit-inner-spin-button {
   width: calc(100% - 1rem);
   padding: 0.25rem;
   line-height: 1rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
+  border: solid 1px var(--gray5);
 }
 
 .card-image {
@@ -254,7 +246,6 @@ input[type=number]::-webkit-inner-spin-button {
   flex-flow: column wrap;
   width: 30%;
   height: 14.7rem;
-  color: rgb(33, 33, 33);
 }
 
 .card-image-display {
@@ -269,14 +260,13 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .card-image-dropdown {
-  border: solid 1px rgb(118, 118, 118);
-  background-color: rgb(255, 255, 255);
-  color: #2f3640;
+  border: solid 1px var(--gray5);
+  background-color: var(--white);
   width: calc(100% - 0.1rem);
   overflow: hidden;
   position: absolute;
   display: none;
-  top: 12rem;
+  top: 11.7rem;
   z-index: 1;
 }
 
@@ -286,28 +276,26 @@ input[type=number]::-webkit-inner-spin-button {
   flex-wrap: wrap;
   padding: 0.25rem 0 0 0.25rem;
   min-height: 1.55rem;
-  background: #e4e4e4;
+  background: var(--gray1);
 }
 .card-dropdown-input-d{
   padding: 0.25rem 0 0 0.25rem;
   line-height: 1.2rem;
   height: 1.55rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
+  border: solid 1px var(--gray5);
   display: flex;
   flex-direction: row;
   overflow: hidden;
   flex-wrap: wrap;
-  background: #e4e4e4;
+  background: var(--gray1);
 }
 
 .card-input-d {
   padding: 0.3rem;
   line-height: 1.2rem;
-  border: solid 1px rgb(118, 118, 118);
-  color: rgb(33, 33, 33);
+  border: solid 1px var(--gray5);
   min-height: 1.2rem;
-  background: #e4e4e4;
+  background: var(--gray1);
 }
 
 .card-toggle-slider-d {
@@ -317,9 +305,9 @@ input[type=number]::-webkit-inner-spin-button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #e4e4e4;
+  background: var(--gray1);
   border-radius: 30px;
-  border: 1px solid #727272d2;
+  border: 1px solid var(--gray6);
 }
 
 .card-toggle-slider-d:before {
@@ -330,12 +318,12 @@ input[type=number]::-webkit-inner-spin-button {
   border-radius: 20px;
   left: 0.3rem;
   bottom: 0.15rem;
-  background: #ffffff;
+  background: var(--white);
   transition: 0.4s;
 }
 
 .card-checkbox-input:checked ~ .card-toggle-slider-d {
-  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+  background: var(--green);
 }
 
 .card-checkbox-input:checked ~ .card-toggle-slider-d:before {
@@ -345,8 +333,8 @@ input[type=number]::-webkit-inner-spin-button {
 .card-checkbox-checkmark-d {
   height: 1.3rem;
   width: 1.3rem;
-  background: #e4e4e4;
-  border: 1px solid #727272d2;
+  background: var(--gray1);
+  border: 1px solid var(--gray6);
   border-radius: 5px;
 }
 
@@ -356,7 +344,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .card-checkbox-input:checked ~ .card-checkbox-checkmark-d {
-  background-image: linear-gradient(#b9e9b3,#a8e4a0)
+  background: var(--green);
 }
 
 .card-checkbox-input:checked ~ .card-checkbox-checkmark-d:after {
@@ -364,7 +352,11 @@ input[type=number]::-webkit-inner-spin-button {
   top: 0.3rem;
   width: 0.25rem;
   height: 0.5rem;
-  border: solid rgb(255, 255, 255);
+  border: solid var(--white);
   border-width: 0 0.15rem 0.15rem 0;
   transform: rotate(45deg);
+}
+  
+.active {
+  display: block;
 }
