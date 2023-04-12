@@ -21,6 +21,7 @@ import ToggleButtonCard from './cards/toggleButtonCard';
 import UrlCard from './cards/urlCard';
 import ImgCard from './cards/imgCard';
 import TextMultiLineCard from './cards/textMultiLineCard';
+import TextRichCard from './cards/textRichCard';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -456,6 +457,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColMultiPlainHandle = {value: item["acColMultiPlain"], setValue: acColMultiPlainSet}
 
+    const [acColMultiRichProps, acColMultiRichPropsSet] = React.useState<IColProps>()
+    React.useEffect(() => {
+      acColMultiRichPropsSet(getColProps("acColMultiRich", cols))
+    }, [cols])
+    const acColMultiRichSet = (value: string) => {
+      setItem({
+        ...item,
+        ["acColMultiRich"]: value,
+      })
+    }
+    const acColMultiRichHandle = {value: item["acColMultiRich"], setValue: acColMultiRichSet}
+
     const displayMode = props.displayMode
 
     /* eslint-enable */
@@ -505,6 +518,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
                 required={acColPictureProps() ? acColPictureProps().Required : false} itemHandle={acColPictureHandle}/>
           <TextMultiLineCard id="acColMultiPlain" title={acColMultiPlainProps ? acColMultiPlainProps.Title : ''} displayMode={displayMode}
                 required={acColMultiPlainProps ? acColMultiPlainProps.Required : false} itemHandle={acColMultiPlainHandle} valueVerify={acColMultiPlainVerify}/>
+          <TextRichCard id="acColMultiRich" title={acColMultiRichProps ? acColMultiRichProps.Title : ''} displayMode={displayMode}
+                required={acColMultiRichProps ? acColMultiRichProps.Required : false} itemHandle={acColMultiRichHandle}/>
         </div>
         {displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
