@@ -40,63 +40,15 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     const [errorMessage, setErrorMessage] = React.useState<string>("")
   //#endregion
 
-  //#region ON_LOAD
-    React.useEffect(() => {
-      if (props.displayMode !== FormDisplayMode.New) {
-        props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            // store etag in case we'll need to update the item
-            const e = res.headers.get('ETag')
-            setEtag(e ? e : "")
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          setItem(body)
-          setKeys(Object.keys(body))
-          return Promise.resolve();
-        })
-        .catch(err => {
-          setShow(true)
-          console.error(err)
-        })
-      }
-      
-      props.context.spHttpClient
-      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
-        headers: {
-          accept: 'application/json;odata.metadata=none'
-        }
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        else {
-          return Promise.reject(res.statusText);
-        }
-      })
-      .then(body => {
-        setCols(body.value)
-        return Promise.resolve();
-      })
-      .catch(err => {
-        setShow(true)
-        console.error(err)
-      })
-    }, [props])
-  //#endregion
-
   //#region TEMPLATE_FUNCTIONS
+    const contains: <A,V>(arr: A[], val: V, getVal?: (x: A) => V) => boolean
+                  = <A,V>(arr: A[], val: V, getVal = (x: A) => {return x as unknown as V}) => {
+      for (const arrItem of arr){
+        if (getVal(arrItem) === val) {return true}
+      }
+      return false
+    }
+
     const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
       let result: (IColProps | null) = null
       cols.forEach(col => {
@@ -110,20 +62,12 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
       let valid = true
       setErrorMessage(``)
-      Object.keys(item).forEach(colName => {
-        let isValidCol = false;
-        for (const key of keys) {
-          if (colName === key) {
-            isValidCol = true;
-            break
-          }
-        }
-        if (!isValidCol) {
-          valid = false
-          setErrorMessage(`${errorMessage}\nAn extra key present in submitted item: ${colName}`)
+      const itemKeys = Object.keys(item)
+      itemKeys.forEach((colName) => {
+        if (!contains(keys, colName)) {
+          delete item[colName]
           return
         }
-
         const colProps = getColProps(colName, cols)
         if (!colProps){
           return
@@ -158,6 +102,109 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         setShow(true)
       })
     }
+  //#endregion
+
+  //#region ON_LOAD
+    const keySettings = {
+      add:[
+        "FileSystemObjectType",
+        "Id",
+        "ServerRedirectedEmbedUri",
+        "ServerRedirectedEmbedUrl",
+        "OData__UIVersionString",
+        "GUID"
+      ],
+      skipName:[
+        "_UIVersionString",
+        "Edit",
+        "LinkTitleNoMenu",
+        "LinkTitle",
+        "DocIcon",
+        "ItemChildCount",
+        "FolderChildCount",
+        "_ComplianceFlags",
+        "_ComplianceTag",
+        "_ComplianceTagWrittenTime",
+        "_ComplianceTagUserId",
+        "_IsRecord",
+        "AppAuthor",
+        "AppEditor"
+      ],
+      idOnlyName:[
+        "ContentType",
+        "Author",
+        "Editor"
+      ],
+      idOnly:[
+        "Lookup"
+      ],
+      stringId:[
+        "User",
+        "UserMulti"
+      ]
+    }
+
+    React.useEffect(() => {
+      if (props.displayMode !== FormDisplayMode.New) {
+        props.context.spHttpClient
+        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
+          headers: {
+            accept: 'application/json;odata.metadata=none'
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            // store etag in case we'll need to update the item
+            const e = res.headers.get('ETag')
+            setEtag(e ? e : "")
+            return res.json();
+          }
+          else {
+            return Promise.reject(res.statusText);
+          }
+        })
+        .then(body => {
+          setItem(body)
+          return Promise.resolve();
+        })
+        .catch(err => {
+          setShow(true)
+          console.error(err)
+        })
+      }
+      
+      props.context.spHttpClient
+      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
+        headers: {
+          accept: 'application/json;odata.metadata=none'
+        }
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        else {
+          return Promise.reject(res.statusText);
+        }
+      })
+      .then(body => {
+        setCols(body.value)
+        setKeys(keySettings.add.concat(body.value.flatMap((field: IColProps) => {
+          if (contains(keySettings.skipName, field.InternalName)) { return [] }
+          if (contains(keySettings.idOnlyName, field.InternalName)) { return `${field.InternalName}Id` }
+          if (contains(keySettings.idOnly, field.TypeAsString)) { return `${field.InternalName}Id` }
+          if (contains(keySettings.stringId, field.TypeAsString)) {
+            return [`${field.InternalName}Id`, `${field.InternalName}StringId`]
+          }
+          return field.InternalName
+        })))
+        return Promise.resolve();
+      })
+      .catch(err => {
+        setShow(true)
+        console.error(err)
+      })
+    }, [props])
   //#endregion
 
   //#region TEST_STUFF
@@ -524,9 +571,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         {displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type="button" className='button button-blue' onClick={() => {
-          //console.log(cols)
+          console.log(cols)
           console.log(item)
-          //console.log(keys)
+          console.log(keys)
         }}>Test Info</button>
       </form>
     </>
