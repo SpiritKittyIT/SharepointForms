@@ -1,0 +1,128 @@
+.cards {
+  display: grid;
+  grid-template:
+    "area-a" 1fr
+    "area-b" 3fr
+    "area-c" 3fr
+    "area-d" 3fr
+    "area-e" 1fr
+    / 1fr;
+}
+
+.area-a {
+  grid-area: area-a;
+  display: grid;
+  grid-template:
+    "title check toggle" 1fr
+    / 4fr 1fr 1fr;
+}
+
+.area-b {
+  grid-area: area-b;
+  display: grid;
+  grid-template:
+    "number photo" 1fr
+    "range photo" 1fr
+    "deci photo" 1fr
+    / 2fr 1fr;
+}
+
+.area-c {
+  grid-area: area-c;
+  display: grid;
+  grid-template:
+    "plain percent" 1fr
+    "plain currency" 1fr
+    "plain hyperlink" 1fr
+    / 1fr 1fr;
+}
+
+.area-d {
+  grid-area: area-d;
+  display: grid;
+  grid-template:
+    "rich date" 1fr
+    "rich datetime" 1fr
+    "rich outcome" 1fr
+    / 1fr 2fr;
+}
+
+.area-e {
+  grid-area: area-e;
+  display: grid;
+  grid-template:
+    "person group type" 1fr
+    / 2fr 2fr 1fr;
+}
+
+.title {
+  grid-area: title;
+}
+
+.check {
+  grid-area: check;
+}
+
+.toggle {
+  grid-area: toggle;
+}
+
+.number {
+  grid-area: number;
+}
+
+.photo {
+  grid-area: photo;
+}
+
+.range {
+  grid-area: range;
+}
+
+.deci {
+  grid-area: deci;
+}
+
+.plain {
+  grid-area: plain;
+}
+
+.percent {
+  grid-area: percent;
+}
+
+.currency {
+  grid-area: currency;
+}
+
+.hyperlink {
+  grid-area: hyperlink;
+}
+
+.rich {
+  grid-area: rich;
+}
+
+.date {
+  grid-area: date;
+}
+
+.datetime {
+  grid-area: datetime;
+}
+
+.outcome {
+  grid-area: outcome;
+}
+
+.person {
+  grid-area: person;
+}
+
+.group {
+  grid-area: group;
+}
+
+.type {
+  grid-area: type;
+}

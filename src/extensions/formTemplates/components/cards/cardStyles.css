@@ -8,7 +8,7 @@
   display: flex;
   padding: 0.5rem;
   flex-flow: column wrap;
-  width: 30%;
+  width: calc(100% - 1rem);
   height: 4.9rem;
   color: var(--black);
 }
@@ -167,8 +167,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 .card-checkbox-cover {
   position: relative;
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0.3rem 0;
 }
 
 .card-checkbox-checkmark {
@@ -183,8 +182,7 @@ input[type=number]::-webkit-inner-spin-button {
   display: block;
   width: 2.5rem;
   height: 1.3rem;
-  margin-top: auto;
-  margin-bottom: auto;
+  margin: 0.3rem 0;
 }
 
 .card-checkbox-input {
@@ -248,12 +246,12 @@ input[type=number]::-webkit-inner-spin-button {
   display: flex;
   padding: 0.5rem;
   flex-flow: column wrap;
-  width: 30%;
-  height: 14.7rem;
+  width: calc(100% - 1rem);
+  height: 16.7rem;
 }
 
 .card-tall-display {
-  height: 11rem;
+  height: 13rem;
 }
 
 .card-tall-img {
