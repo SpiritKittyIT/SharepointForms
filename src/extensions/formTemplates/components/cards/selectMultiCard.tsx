@@ -48,7 +48,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
   }
 
   const select: (choice: IChoice) => void  = (choice) => {
-    if (isChosen(choice.id)) { return }
+    if (isChosen(choice.Id)) { return }
     const newChosen =  chosen.concat([choice])
     setChosen(newChosen)
     itemHandle.setValue(newChosen.map((item) => {return item.Id}))
@@ -74,7 +74,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                   <div className='card-selected-value'>{getDisplayText(item)}</div>
                 </div>
                 )}) 
-                : `Select ${title}...`}
+              : `Select ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-filter-selected-d ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>

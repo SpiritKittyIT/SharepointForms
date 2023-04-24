@@ -2,11 +2,13 @@ import * as React from 'react';
 import { FormDisplayMode } from '@microsoft/sp-core-library';
 import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
 import { FC } from 'react';
 import Error from './error';
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
+import './dataDisplays/dataDisplayStyles.css'
 import './customFormStyles.css'
 import { isNull } from 'lodash';
 import CurrencyCard from './cards/currencyCard';
@@ -23,6 +25,7 @@ import UrlCard from './cards/urlCard';
 import ImgCard from './cards/imgCard';
 import TextMultiLineCard from './cards/textMultiLineCard';
 import TextRichCard from './cards/textRichCard';
+import ListDisplay from './dataDisplays/listDisplay';
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -523,6 +526,42 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const acColMultiRichHandle = {value: item["acColMultiRich"], setValue: acColMultiRichSet}
 
+    const style1: React.CSSProperties = {width: '1.2rem', display: 'grid', placeItems: 'center'}
+    const style2: React.CSSProperties = {width: '3rem', display: 'grid', placeItems: 'center'}
+    const style3: React.CSSProperties = {width: '2rem', display: 'grid', placeItems: 'center'}
+
+    interface ITest {id: number; name: string; age: string}
+    const testList: ITest[] = [{id: 0, name: 'aaa', age:'16'},{id: 1, name: 'bbb', age:'17'},{id: 2, name: 'ccc', age:'23'},
+                      {id: 3, name: 'ddd', age:'10'},{id: 4, name: 'eee', age:'48'},{id: 5, name: 'fff', age:'31'}]
+    const testFuncList = [(val: ITest) => {return (<div style={style1}>{val.id}</div>)},(val: ITest) => {return (<div style={style2}>{val.name}</div>)},(val: ITest) => {return (<div style={style3}>{val.age}</div>)}]
+    const headerList = [<div style={style1}><b>Id</b></div>, <div style={style2}><b>Name</b></div>, <div style={style3}><b>Age</b></div>]
+
+          
+    const [fileUrl, fileUrlSet] = React.useState<string>("")
+    async function fillForm() {
+      const pdfDoc = await PDFDocument.create()
+      pdfDoc.setTitle('TestPdf')
+      const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+
+      const page = pdfDoc.addPage()
+      const { width, height } = page.getSize()
+      const fontSize = 30
+      page.drawText('Creating PDFs in JavaScript is awesome!', {
+        x: width*0 + 50,
+        y: height - 4 * fontSize,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0, 0.53, 0.71),
+      })
+
+      const blob = new Blob([await pdfDoc.save()], {type: 'application/pdf'})
+      fileUrlSet(URL.createObjectURL(blob))
+    }
+
+    React.useEffect(() => {
+      fillForm()
+    }, [cols])
+
     const displayMode = props.displayMode
 
     /* eslint-enable */
@@ -628,7 +667,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           console.log(item)
           console.log(keys)
         }}>Test Info</button>
+        <a href={fileUrl} className='button button-orange' style={{textDecoration: 'none'}} download='TestForm.pdf'>pdf</a>
       </form>
+      <ListDisplay id='test' headerList={headerList} dataList={testList} dataToColList={testFuncList} />
     </>
   )
 }

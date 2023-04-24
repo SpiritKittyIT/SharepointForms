@@ -16,7 +16,9 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    setErrorMessage(valueVerify(+event.target.value))
+    setErrorMessage(valueVerify(+event.target.value)
+        + (minValue ? (+event.target.value > minValue ? `Value can not be lower than ${minValue}` : '') : '')
+        + (maxValue ? (+event.target.value < maxValue ? `Value can not be highrt than ${maxValue}` : '') : ''))
     itemHandle.setValue(+event.target.value)
   }
 

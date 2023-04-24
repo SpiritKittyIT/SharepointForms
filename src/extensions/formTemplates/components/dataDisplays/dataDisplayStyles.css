@@ -1,0 +1,23 @@
+.data-list-wrapper {
+  border: 1px solid var(--gray5);
+  width: fit-content;
+}
+
+.data-list-row {
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+}
+
+.data-list-row:hover {
+  background-color: var(--transparent-gray2);
+}
+
+.data-list-header {
+  background-color: var(--transparent-mint);
+  border-bottom: 1px solid var(--gray5);
+}
+
+.data-list-cell {
+  min-height: 1.2rem;
+}
