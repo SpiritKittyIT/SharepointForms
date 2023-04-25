@@ -19,6 +19,7 @@ interface ITextRichCard {
 const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
   const [errorMessage, setErrorMessage] = React.useState<string>("")
   const [editorState, setEditorState] = React.useState<EditorState>(EditorState.createEmpty())
+  const spanRef = React.useRef<HTMLSpanElement>(null);
 
   React.useEffect(() => {
     const contentBlock = htmlToDraft(itemHandle.value ? itemHandle.value : '')
@@ -29,6 +30,12 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
       setEditorState(editorState)
     }
   }, [title])
+
+  React.useEffect(() => {
+    if (spanRef.current) {
+      spanRef.current.innerHTML = itemHandle.value;
+    }
+  }, [spanRef.current, itemHandle.value]);
 
   const onChange: (state: RawDraftContentState) => void  = (state) => {
     const val = draftToHtml(state)
@@ -55,7 +62,7 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div id={id} className='card-input-d card-tall-display'>{itemHandle.value}</div>
+        <div id={id} className='card-input-d card-tall-display'><span ref={spanRef} /></div>
       </div>
     )
     : (

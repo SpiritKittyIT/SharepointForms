@@ -292,6 +292,35 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }, [siteUsers, siteGroups])
   //#endregion
 
+  //#region PDF
+    //just a prototype for generating a pdf file to download
+    //uncomment if used
+    const [fileUrl, fileUrlSet] = React.useState<string>("")
+    async function fillForm() {
+      const pdfDoc = await PDFDocument.create()
+      pdfDoc.setTitle('TestPdf')
+      const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+
+      const page = pdfDoc.addPage()
+      const { width, height } = page.getSize()
+      const fontSize = 30
+      page.drawText('Creating PDFs in JavaScript is awesome!', {
+        x: width*0 + 50,
+        y: height - 4 * fontSize,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0, 0.53, 0.71),
+      })
+
+      const blob = new Blob([await pdfDoc.save()], {type: 'application/pdf'})
+      fileUrlSet(URL.createObjectURL(blob))
+    }
+
+    React.useEffect(() => {
+      fillForm()
+    }, [cols])
+  //#endregion
+
   // Enter your code here
 
   //#region TEST_STUFF
@@ -536,32 +565,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     const testFuncList = [(val: ITest) => {return (<div style={style1}>{val.id}</div>)},(val: ITest) => {return (<div style={style2}>{val.name}</div>)},(val: ITest) => {return (<div style={style3}>{val.age}</div>)}]
     const headerList = [<div style={style1}><b>Id</b></div>, <div style={style2}><b>Name</b></div>, <div style={style3}><b>Age</b></div>]
 
-          
-    const [fileUrl, fileUrlSet] = React.useState<string>("")
-    async function fillForm() {
-      const pdfDoc = await PDFDocument.create()
-      pdfDoc.setTitle('TestPdf')
-      const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-
-      const page = pdfDoc.addPage()
-      const { width, height } = page.getSize()
-      const fontSize = 30
-      page.drawText('Creating PDFs in JavaScript is awesome!', {
-        x: width*0 + 50,
-        y: height - 4 * fontSize,
-        size: fontSize,
-        font: timesRomanFont,
-        color: rgb(0, 0.53, 0.71),
-      })
-
-      const blob = new Blob([await pdfDoc.save()], {type: 'application/pdf'})
-      fileUrlSet(URL.createObjectURL(blob))
-    }
-
-    React.useEffect(() => {
-      fillForm()
-    }, [cols])
-
     const displayMode = props.displayMode
 
     /* eslint-enable */
@@ -639,24 +642,24 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
             <div className='outcome'>
               <SelectCard id="acColOutcome" title={acColOutcomeProps() ? acColOutcomeProps().Title : ''} displayMode={displayMode}
                   required={acColOutcomeProps() ? acColOutcomeProps().Required : false} itemHandle={acColOutcomeHandle}
-                  choices={acColOutcomeChoices} selected={acColOutcomeSelected}/>
+                  choices={acColOutcomeChoices} selected={{value: acColOutcomeSelected, setValue: acColOutcomeSelectedSet}}/>
             </div>
           </div>
           <div className='area-e'>
             <div className='person'>
               <SelectMultiCard id="acColPerson" title={acColPersonProps ? acColPersonProps.Title : ''} displayMode={displayMode}
                   required={acColPersonProps ? acColPersonProps.Required : false} itemHandle={acColPersonHandle}
-                  choices={acColPersonChoices} selected={acColPersonSelected}/>
+                  choices={acColPersonChoices} selected={{value: acColPersonSelected, setValue: acColPersonSelectedSet}}/>
             </div>
             <div className='group'>
               <SelectCard id="acColGroup" title={acColGroupProps ? acColGroupProps.Title : ''} displayMode={displayMode}
                   required={acColGroupProps ? acColGroupProps.Required : false} itemHandle={acColGroupHandle}
-                  choices={acColGroupChoices} selected={acColGroupSelected}/>
+                  choices={acColGroupChoices} selected={{value: acColGroupSelected, setValue: acColGroupSelectedSet}}/>
             </div>
             <div className='type'>
               <SelectCard id="acColChoice" title={acColChoiceProps() ? acColChoiceProps().Title : ''} displayMode={displayMode}
                   required={acColChoiceProps() ? acColChoiceProps().Required : false} itemHandle={acColChoiceHandle}
-                  choices={acColChoiceChoices} selected={acColChoiceSelected}/>
+                  choices={acColChoiceChoices} selected={{value: acColChoiceSelected, setValue: acColChoiceSelectedSet}}/>
             </div>
           </div>
         </div>

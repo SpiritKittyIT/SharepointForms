@@ -8,7 +8,7 @@ interface ISelectCard {
     required: boolean
     itemHandle: IHandle<string>
     choices: IChoice[]
-    selected: IChoice
+    selected: IHandle<IChoice>
     choiceFilter?: (choice: IChoice) => boolean
     getDisplayText?:  (choice: IChoice) => string
 }
@@ -32,36 +32,31 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
   const wrapperRef = React.useRef(null)
   const [search, setSearch] = React.useState<string>("")
   const [active, setActive] = React.useState<boolean>(false)
-  const [chosen, setChosen] = React.useState<IChoice>()
 
   useOutsideHider(wrapperRef, setActive)
   
   const setSelected: (choice: IChoice) => void  = (choice) => {
-    setChosen(choice)
+    selected.setValue(choice)
     itemHandle.setValue(choice?.Id)
   }
-
-  React.useEffect(() => {
-    setChosen(selected)
-  }, [selected])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
-          <div className={`card-dropdown-input-d ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            { chosen
+          <div className={`card-dropdown-input-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+            { selected.value
               ? <div className='card-selected'>
-                  <div className='card-selected-value'>{getDisplayText(chosen)}</div>
+                  <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                 </div>
               : `Select ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected-d ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-              { chosen
+            <div className={`card-filter-selected-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+              { selected.value
                 ? <div className='card-selected'>
-                    <div className='card-selected-value'>{getDisplayText(chosen)}</div>
+                    <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                   </div>
                 : `Select ${title}...`}
             </div>
@@ -73,18 +68,18 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
         <div id={id} ref={wrapperRef} className="card-select-menu">
-          <div className={`card-dropdown-input ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            {chosen
+          <div className={`card-dropdown-input ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+            {selected.value
               ? <div className='card-selected'>
-                  <div className='card-selected-value'>{getDisplayText(chosen)}</div>
+                  <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                 </div>
                 : `Select ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected ${chosen ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-              {chosen
+            <div className={`card-filter-selected ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
+              {selected.value
                 ? <div className='card-selected'>
-                    <div className='card-selected-value'>{getDisplayText(chosen)}</div>
+                    <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                     <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); setSelected(null)}}>X</div>
                   </div>
                 : `Select ${title}...`}
@@ -98,7 +93,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
                 })
                 .map((choice: IChoice) => {return(
                   <div className="option" key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
-                    <input type="radio" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={choice.Id === chosen?.Id} onChange={(event) => {setSelected(choice)}} />
+                    <input type="radio" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={choice.Id === selected.value?.Id} onChange={(event) => {setSelected(choice)}} />
                     <label className="option-label" htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
                   </div>
                 )})
