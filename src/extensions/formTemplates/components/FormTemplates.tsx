@@ -10,7 +10,7 @@ import './formTemplates.module.css'
 import './cards/cardStyles.css'
 import './dataDisplays/dataDisplayStyles.css'
 import './customFormStyles.css'
-//import { localeCurrencies } from '../loc/dictionaries';
+//import { localeCurrencies } from '../loc/dictionaries'
 
 import Error from './error'
 import TextCard from './cards/textCard'
@@ -311,7 +311,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   // Enter your code here
 
-  //#region TEST_STUFF
+  //#region FORM_CODE
     /* eslint-disable */
     const TitleProps = () => {return getColProps("Title", cols)}
     const TitleSet = (value: string) => {
@@ -322,7 +322,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
     const TitleVerify = (value: string) => {return value.indexOf("Item") === 0 ? '' : 'Title needs to start with "Item"'}
     const TitleHandle = {value: item["Title"], setValue: TitleSet}
-
     /* eslint-enable */
   //#endregion
 
