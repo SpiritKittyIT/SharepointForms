@@ -70,6 +70,9 @@ Short summary on functionality and used technologies.
   - **$site = Get-SPOSite https://contoso.sharepoint.com/sites/commssite**
   - **Add-SPOSiteCollectionAppCatalog -Site $site**
 
+- Tutorial to create new Id for the app
+  - **https://www.c-sharpcorner.com/article/deploy-multiple-instance-of-spfx-webpart-in-same-app-catalog/**
+
 - App componentId: 05459ba7-ba24-45da-be05-9b686a07aa21
 - Content Type Id: 0x01009E2CD1BE58060F4D85FFD017C8B4A10100B627C45C54BBA148A4B94ADC574CC0D2
 - List Name: acLstMain | Id: 1d7b000f-dcd5-440d-ab2d-15da68c2e90b

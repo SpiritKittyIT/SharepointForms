@@ -320,7 +320,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         ["Title"]: value,
       })
     }
-    const TitleVerify = (value: string) => {return value.indexOf("Item") === 0 ? '' : 'Title needs to start with "Item"'}
     const TitleHandle = {value: item["Title"], setValue: TitleSet}
     /* eslint-enable */
   //#endregion
@@ -330,7 +329,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form>
         <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={props.displayMode}
-            required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
+            required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle}/>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
       </form>
