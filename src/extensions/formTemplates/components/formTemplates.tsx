@@ -319,7 +319,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     const TitleHandle = {value: item["Title"], setValue: (value: string) => StringValSet(value,'Title')}
     const TitleVerify = (value: string) => {
       if (TitleProps?.Required && !value) {
-        return 'This field can not be left empty'
+        return `${TitleProps?.Title ? TitleProps?.Title : 'This field'} can not be left empty`
       }
       return ''
     }
