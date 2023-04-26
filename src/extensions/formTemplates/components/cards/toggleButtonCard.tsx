@@ -14,9 +14,12 @@ const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, 
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    setErrorMessage(valueVerify(event.target.checked))
     itemHandle.setValue(event.target.checked)
   }
+
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

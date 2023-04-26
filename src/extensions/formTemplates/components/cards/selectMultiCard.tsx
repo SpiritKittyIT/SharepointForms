@@ -113,12 +113,16 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
               <input type="text" className="card-select-input" placeholder="Start Typing..." value={search} onChange={(event) => {setSearch(event.target.value)}} />
             </div>
             <div className="card-select-options">
-              {choices.filter((choice) => {return getDisplayText(choice).toLowerCase().indexOf(search?.toLowerCase()) >= 0}).map((choice) => {return(
-                <div className="option" key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
-                  <input type="checkbox" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={isSelected(choice.Id)} onChange={(event) => {select(choice)}} />
-                  <label className="option-label" htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
-                </div>
-              )})}
+              { choices?.filter((choice) => {
+                  return choiceFilter(choice) && getDisplayText(choice).toLowerCase().indexOf(search.toLowerCase()) >= 0
+                })
+                .map((choice) => {return(
+                  <div className="option" key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
+                    <input type="checkbox" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={isSelected(choice.Id)} onChange={(event) => {select(choice)}} />
+                    <label className="option-label" htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
+                  </div>
+                )})
+              }
             </div>
           </div>
         </div>

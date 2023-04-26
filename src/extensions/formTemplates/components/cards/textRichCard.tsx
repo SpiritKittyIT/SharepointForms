@@ -39,9 +39,12 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
 
   const onChange: (state: RawDraftContentState) => void  = (state) => {
     const val = draftToHtml(state)
-    setErrorMessage(valueVerify(val))
     itemHandle.setValue(val)
   }
+
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value])
 
   const toolbarSettings = {
     options: ['inline', 'list', 'textAlign', 'colorPicker', 'link', 'image'],

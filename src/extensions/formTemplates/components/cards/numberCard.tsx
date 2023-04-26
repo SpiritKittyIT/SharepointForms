@@ -22,6 +22,12 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
     itemHandle.setValue(+event.target.value)
   }
 
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value)
+        + (minValue ? (itemHandle.value > minValue ? `Value can not be lower than ${minValue}` : '') : '')
+        + (maxValue ? (itemHandle.value < maxValue ? `Value can not be highrt than ${maxValue}` : '') : ''))
+  }, [itemHandle.value])
+
   try {
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>

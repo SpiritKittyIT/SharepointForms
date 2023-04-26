@@ -3,7 +3,6 @@ import { FC } from 'react'
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility'
-import { isNull } from 'lodash'
 //import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
 import './formTemplates.module.css'
@@ -53,43 +52,35 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
     const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
       let valid = true
-      setErrorMessage(``)
+      let newErrorMessage = 'There were errors during form submission:'
+      if (props.displayMode === FormDisplayMode.Display){
+        setErrorMessage(`${newErrorMessage}\nYou can not submit form in Display mode`)
+        setShow(true)
+        return
+      }
       const itemKeys = Object.keys(item)
       itemKeys.forEach((colName) => {
         if (!contains(keys, colName)) {
           delete item[colName]
           return
         }
-        const colProps = getColProps(colName, cols)
-        if (!colProps){
-          return
-        }
-        if (colProps.Required && (item[colName] === "" || isNull(item[colName]))){
-          valid = false
-          setErrorMessage(`${errorMessage}\n${colProps.Title} cannot be left empty`)
-        }
       })
       const cardErrors = document.getElementsByClassName('card-error')
       if (cardErrors.length > 0) { valid = false }
       for (let i = 0; i < cardErrors.length; i++) {
-        setErrorMessage(cardErrors[i].textContent)
+        newErrorMessage = `${newErrorMessage}\n${cardErrors[i].textContent}`
       }
       if (!valid){
-        setShow(true)
-        return
-      }
-      if (props.displayMode === FormDisplayMode.Display){
-        setErrorMessage(`${errorMessage}\nYou can not submit form in Display mode`)
+        setErrorMessage(newErrorMessage)
         setShow(true)
         return
       }
       await props.onSave(item, etag).catch((error: Error) => {
-        console.error(error.message)
         if (error.message.indexOf("The request ETag value") !== -1){
-          setErrorMessage(`${errorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
+          setErrorMessage(`${newErrorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
         }
         else {
-          setErrorMessage(`${errorMessage}\nAn unspecified error occured during form submission. Prease leave the site and try again later.`)
+          setErrorMessage(`${newErrorMessage}\n${error.message}`)
         }
         setShow(true)
       })
@@ -313,14 +304,25 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   //#region FORM_CODE
     /* eslint-disable */
-    const TitleProps = () => {return getColProps("Title", cols)}
-    const TitleSet = (value: string) => {
+    const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
+    React.useEffect(() => {
+      TitlePropsSet(getColProps("Title", cols))
+    }, [cols])
+
+    const StringValSet = (value: string, valueName: string) => {
       setItem({
         ...item,
-        ["Title"]: value,
+        [valueName]: value,
       })
     }
-    const TitleHandle = {value: item["Title"], setValue: TitleSet}
+
+    const TitleHandle = {value: item["Title"], setValue: (value: string) => StringValSet(value,'Title')}
+    const TitleVerify = (value: string) => {
+      if (TitleProps?.Required && !value) {
+        return 'This field can not be left empty'
+      }
+      return ''
+    }
     /* eslint-enable */
   //#endregion
 
@@ -328,8 +330,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form>
-        <TextCard id="Title" title={TitleProps() ? TitleProps().Title : ''} displayMode={props.displayMode}
-            required={TitleProps() ? TitleProps().Required : false} itemHandle={TitleHandle}/>
+        <TextCard id="Title" title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
+            required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
       </form>

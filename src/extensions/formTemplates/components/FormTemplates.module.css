@@ -75,6 +75,7 @@
   padding: 20px;
   border: 1px solid var(--gray5);
   width: 80%; /* Could be more or less, depending on screen size */
+  white-space: pre-line;
 }
 
 .button {

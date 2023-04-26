@@ -16,9 +16,12 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    setErrorMessage(valueVerify(+event.target.value))
     itemHandle.setValue(+event.target.value / 100)
   }
+
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

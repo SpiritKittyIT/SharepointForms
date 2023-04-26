@@ -14,9 +14,12 @@ const TextMultiLineCard: React.FC<ITextMultiLineCard> = ({id, title, displayMode
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void  = (event) => {
-    setErrorMessage(valueVerify(event.target.value))
     itemHandle.setValue(event.target.value)
   }
+
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

@@ -35,9 +35,12 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
     const newVal = event.target.id.indexOf("URL") === 0
                     ? {Description: itemHandle.value.Description, Url: event.target.value}
                     : {Description: event.target.value, Url: itemHandle.value.Url}
-    setErrorMessage(valueVerify(newVal))
     itemHandle.setValue(newVal)
   }
+
+  React.useEffect(() => {
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
