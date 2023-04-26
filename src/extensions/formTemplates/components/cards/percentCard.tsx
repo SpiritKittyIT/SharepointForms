@@ -20,8 +20,8 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
   }
 
   React.useEffect(() => {
-    setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+    setErrorMessage(`${valueVerify(itemHandle.value)}${(required && !itemHandle.value) ? `${title ? title : 'This field'} can not be left empty` : ''}`)
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

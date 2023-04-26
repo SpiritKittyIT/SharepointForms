@@ -43,8 +43,12 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
   }
 
   React.useEffect(() => {
+    if (required && !itemHandle.value) {
+      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      return
+    }
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   const toolbarSettings = {
     options: ['inline', 'list', 'textAlign', 'colorPicker', 'link', 'image'],

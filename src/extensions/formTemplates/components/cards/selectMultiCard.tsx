@@ -32,6 +32,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
   const wrapperRef = React.useRef(null)
   const [search, setSearch] = React.useState<string>("")
   const [active, setActive] = React.useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   useOutsideHider(wrapperRef, setActive)
 
@@ -55,7 +56,12 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
     itemHandle.setValue(newSelected.map((item) => {return item.Id}))
   }
 
-  useOutsideHider(wrapperRef, setActive)
+  React.useEffect(() => {
+    if (required && !itemHandle.value) {
+      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      return
+    }
+  }, [itemHandle.value, required])
   
   try {
     return displayMode === FormDisplayMode.Display ? (
@@ -126,6 +132,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
             </div>
           </div>
         </div>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
     )
   }

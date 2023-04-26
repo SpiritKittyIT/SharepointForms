@@ -32,6 +32,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
   const wrapperRef = React.useRef(null)
   const [search, setSearch] = React.useState<string>("")
   const [active, setActive] = React.useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   useOutsideHider(wrapperRef, setActive)
   
@@ -39,6 +40,13 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
     selected.setValue(choice)
     itemHandle.setValue(choice?.Id)
   }
+
+  React.useEffect(() => {
+    if (required && !itemHandle.value) {
+      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      return
+    }
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
@@ -101,6 +109,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
             </div>
           </div>
         </div>
+        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
     )
   }

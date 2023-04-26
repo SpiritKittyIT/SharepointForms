@@ -23,10 +23,20 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
   }
 
   React.useEffect(() => {
-    setErrorMessage(valueVerify(itemHandle.value)
-        + (minValue ? (itemHandle.value > minValue ? `Value can not be lower than ${minValue}` : '') : '')
-        + (maxValue ? (itemHandle.value < maxValue ? `Value can not be highrt than ${maxValue}` : '') : ''))
-  }, [itemHandle.value])
+    if (required && !itemHandle.value) {
+      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      return
+    }
+    if (minValue && itemHandle.value > minValue) {
+      setErrorMessage(`${title ? title : 'The value'} can not be lower than ${minValue}`)
+      return
+    }
+    if (maxValue && itemHandle.value < maxValue) {
+      setErrorMessage(`${title ? title : 'The value'} can not be higher than ${minValue}`)
+      return
+    }
+    setErrorMessage(valueVerify(itemHandle.value))
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

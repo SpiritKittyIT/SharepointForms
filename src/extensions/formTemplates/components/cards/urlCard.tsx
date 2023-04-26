@@ -39,8 +39,12 @@ const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHand
   }
 
   React.useEffect(() => {
+    if (required && !(itemHandle.value?.Description && itemHandle.value?.Url)) {
+      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      return
+    }
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
