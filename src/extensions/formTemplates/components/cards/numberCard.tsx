@@ -26,7 +26,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
     setErrorMessage(valueVerify(itemHandle.value)
         + (minValue ? (itemHandle.value > minValue ? `Value can not be lower than ${minValue}` : '') : '')
         + (maxValue ? (itemHandle.value < maxValue ? `Value can not be highrt than ${maxValue}` : '') : ''))
-  }, [itemHandle.value, required])
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

@@ -40,7 +40,7 @@ const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHand
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value, required])
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

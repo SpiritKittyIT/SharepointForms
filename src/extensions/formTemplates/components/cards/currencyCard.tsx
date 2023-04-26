@@ -22,7 +22,7 @@ const CurrencyCard: React.FC<ICurrencyCard> = ({id, title, currencySymbol, displ
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value, required])
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

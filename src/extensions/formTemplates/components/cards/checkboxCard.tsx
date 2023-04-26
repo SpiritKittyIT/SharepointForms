@@ -19,7 +19,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value, required])
+  }, [itemHandle.value])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
