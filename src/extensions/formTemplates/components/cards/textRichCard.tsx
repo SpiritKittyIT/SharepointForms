@@ -44,7 +44,7 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   const toolbarSettings = {
     options: ['inline', 'list', 'textAlign', 'colorPicker', 'link', 'image'],

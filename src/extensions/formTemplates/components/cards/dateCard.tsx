@@ -20,7 +20,7 @@ const DateCard: React.FC<IDateCard> = ({id, title, displayMode, required, itemHa
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

@@ -19,7 +19,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (

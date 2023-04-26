@@ -19,7 +19,7 @@ const ToggleButtonCard: React.FC<IToggleButtonCard> = ({id, title, displayMode, 
 
   React.useEffect(() => {
     setErrorMessage(valueVerify(itemHandle.value))
-  }, [itemHandle.value])
+  }, [itemHandle.value, required])
 
   try {
     return displayMode === FormDisplayMode.Display ? (
