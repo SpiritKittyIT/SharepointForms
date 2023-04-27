@@ -300,6 +300,46 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }, [cols])*/
   //#endregion
 
+
+  //#region LOOKUP
+    //uncomment if used
+    /* eslint-disable */
+    /*const [Lst, acLstSet] = React.useState<IChoice[]>([])
+    const [LstSelected, LstSelectedSet] = React.useState<IChoice>()
+
+    React.useEffect(() => {
+      props.context.spHttpClient
+        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/getbyid('3b8e8b9e-8abf-43cd-b9ea-46359a784bc6')/items`, SPHttpClient.configurations.v1, {
+          headers: {
+            accept: 'application/json'
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          }
+          else {
+            return Promise.reject(res.statusText);
+          }
+        })
+        .then(body => {
+          if(!body.value) {return}
+          const listItems: IChoice[] = body.value
+          acLstSet(listItems)
+          for(const listItem of listItems){
+            if(item["LstLookup"].toString() === listItem.Id.toString()){
+              LstSelectedSet(listItem)
+            }
+          }
+          return Promise.resolve();
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    }, [props, keys])*/
+    /* eslint-enable */
+  //#endregion
+
   // Enter your code here
 
   //#region FORM_CODE
