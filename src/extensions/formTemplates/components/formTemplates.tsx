@@ -317,12 +317,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
 
     const TitleHandle = {value: item["Title"], setValue: (value: string) => StringValSet(value,'Title')}
-    const TitleVerify = (value: string) => {
-      if (!value) {
-        return `${TitleProps?.Title ? TitleProps?.Title : 'This field'} can not be left empty`
-      }
-      return ''
-    }
     /* eslint-enable */
   //#endregion
 
@@ -331,7 +325,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form>
         <TextCard id="Title" title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
-            required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle} valueVerify={TitleVerify}/>
+            required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
         {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
       </form>
