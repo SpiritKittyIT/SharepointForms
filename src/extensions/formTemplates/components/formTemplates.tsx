@@ -327,7 +327,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           const listItems: IChoice[] = body.value
           acLstSet(listItems)
           for(const listItem of listItems){
-            if(item["LstLookup"].toString() === listItem.Id.toString()){
+            if(item["LstLookupId"]?.toString() === listItem.Id.toString()){
               LstSelectedSet(listItem)
             }
           }
