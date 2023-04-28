@@ -15,7 +15,7 @@ const DateCard: React.FC<IDateCard> = ({id, title, displayMode, required, itemHa
   const [errorMessage, setErrorMessage] = React.useState<string>("")
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    itemHandle.setValue(dateonly ? `${event.target.value}Z` : `${event.target.value}T00:00:00Z`)
+    itemHandle.setValue(dateonly ? `${event.target.value}T00:00:00Z` : `${event.target.value}:00Z`)
   }
 
   React.useEffect(() => {
