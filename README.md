@@ -81,7 +81,7 @@ Short summary on functionality and used technologies.
   - If PnP not installed:
     - **Install-Module PnP.PowerShell**
     - **Register-PnPManagementShellAccess**
-  - **Connect-PnPOnline -Url https://contoso.sharepoint.com/sites/commssite**
+  - **Connect-PnPOnline -Url https://contoso.sharepoint.com/sites/commssite -Interactive**
   - **$targetList = Get-PnPList -identity "1d7b000f-dcd5-440d-ab2d-15da68c2e90b"**
   - **$targetContentType = get-PnPContentType -List $targetList -Identity "0x01009E2CD1BE58060F4D85FFD017C8B4A10100B627C45C54BBA148A4B94ADC574CC0D2"**
   - **$targetContentType.DisplayFormClientSideComponentId = "05459ba7-ba24-45da-be05-9b686a07aa21"**
