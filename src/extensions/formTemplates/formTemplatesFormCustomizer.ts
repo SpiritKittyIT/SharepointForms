@@ -79,7 +79,7 @@ export default class FormTemplatesFormCustomizer
 
   private _createItem(item: {[key: string]:string}): Promise<SPHttpClientResponse> {
     return this.context.spHttpClient
-      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/getByTitle('${this.context.list.title}')/items`, SPHttpClient.configurations.v1, {
+      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetById('${this.context.list.guid}')/items`, SPHttpClient.configurations.v1, {
         headers: {
           'content-type': 'application/json;odata.metadata=none'
         },
@@ -89,7 +89,7 @@ export default class FormTemplatesFormCustomizer
 
   private _updateItem(item: {[key: string]:string}, etag: string): Promise<SPHttpClientResponse> {
     return this.context.spHttpClient
-      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/getByTitle('${this.context.list.title}')/items(${this.context.itemId})`, SPHttpClient.configurations.v1, {
+      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetById('${this.context.list.guid}')/items(${this.context.itemId})`, SPHttpClient.configurations.v1, {
         headers: {
           'content-type': 'application/json;odata.metadata=none',
           'if-match': etag,

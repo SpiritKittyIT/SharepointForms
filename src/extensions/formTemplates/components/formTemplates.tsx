@@ -23,12 +23,11 @@ export interface IFormTemplatesProps {
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#region TEMPLATE_STATES
-    const [item, setItem] = React.useState<{[key: string]:any}>({}) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const [item, setItem] = React.useState<{[key: string]:any}>(props.displayMode === FormDisplayMode.New ? {} : props.context.item) // eslint-disable-line @typescript-eslint/no-explicit-any
     const [cols, setCols] = React.useState<IColProps[]>([])
-    const [etag, setEtag] = React.useState<string>("")
     const [keys, setKeys] = React.useState<string[]>([])
     const [show, setShow] = React.useState<boolean>(false)
-    const [errorMessage, setErrorMessage] = React.useState<string>("")
+    const [errorMessage, setErrorMessage] = React.useState<string>('')
   //#endregion
 
   //#region TEMPLATE_FUNCTIONS
@@ -75,8 +74,32 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         setShow(true)
         return
       }
+      let etag: string = ''
+      await props.context.spHttpClient
+        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
+          headers: {
+            accept: 'application/json;odata.metadata=none'
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            const e = res.headers.get('ETag')
+            etag = e ? e : ''
+            return res.json();
+          }
+          else {
+            return Promise.reject(res.statusText);
+          }
+        })
+        .then(body => {
+          return Promise.resolve();
+        })
+        .catch(err => {
+          setShow(true)
+          console.error(err)
+        })
       await props.onSave(item, etag).catch((error: Error) => {
-        if (error.message.indexOf("The request ETag value") !== -1){
+        if (error.message.indexOf('The request ETag value') !== -1){
           setErrorMessage(`${newErrorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
         }
         else {
@@ -90,72 +113,49 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#region ON_LOAD
     const keySettings = {
       add:[
-        "FileSystemObjectType",
-        "Id",
-        "ServerRedirectedEmbedUri",
-        "ServerRedirectedEmbedUrl",
-        "OData__UIVersionString",
-        "GUID"
+        'FileSystemObjectType',
+        'Id',
+        'ServerRedirectedEmbedUri',
+        'ServerRedirectedEmbedUrl',
+        'OData__UIVersionString',
+        'GUID'
       ],
       skipName:[
-        "_UIVersionString",
-        "Edit",
-        "LinkTitleNoMenu",
-        "LinkTitle",
-        "DocIcon",
-        "ItemChildCount",
-        "FolderChildCount",
-        "_ComplianceFlags",
-        "_ComplianceTag",
-        "_ComplianceTagWrittenTime",
-        "_ComplianceTagUserId",
-        "_IsRecord",
-        "AppAuthor",
-        "AppEditor"
+        '@odata.context',
+        '@odata.editLink',
+        '@odata.etag',
+        '@odata.id',
+        '@odata.type',
+        '_UIVersionString',
+        'Edit',
+        'LinkTitleNoMenu',
+        'LinkTitle',
+        'DocIcon',
+        'ItemChildCount',
+        'FolderChildCount',
+        '_ComplianceFlags',
+        '_ComplianceTag',
+        '_ComplianceTagWrittenTime',
+        '_ComplianceTagUserId',
+        '_IsRecord',
+        'AppAuthor',
+        'AppEditor'
       ],
       idOnlyName:[
-        "ContentType",
-        "Author",
-        "Editor"
+        'ContentType',
+        'Author',
+        'Editor'
       ],
       idOnly:[
-        "Lookup"
+        'Lookup'
       ],
       stringId:[
-        "User",
-        "UserMulti"
+        'User',
+        'UserMulti'
       ]
     }
 
     React.useEffect(() => {
-      if (props.displayMode !== FormDisplayMode.New) {
-        props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            // store etag in case we'll need to update the item
-            const e = res.headers.get('ETag')
-            setEtag(e ? e : "")
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          setItem(body)
-          return Promise.resolve();
-        })
-        .catch(err => {
-          setShow(true)
-          console.error(err)
-        })
-      }
-      
       props.context.spHttpClient
       .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
         headers: {
@@ -215,13 +215,13 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         .then(body => {
           setSiteUsers(body.value.filter((user: User) => {
             switch (user.LoginName) {
-              case "c:0(.s|true":
+              case 'c:0(.s|true':
                 return false
-              case "i:0#.w|nt service\\spsearch":
+              case 'i:0#.w|nt service\\spsearch':
                 return false
-              case "i:0i.t|00000003-0000-0ff1-ce00-000000000000|app@sharepoint":
+              case 'i:0i.t|00000003-0000-0ff1-ce00-000000000000|app@sharepoint':
                 return false
-              case "SHAREPOINT\\system":
+              case 'SHAREPOINT\\system':
                 return false
               default:
                 return true
@@ -248,7 +248,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           })
           .then(body => {
             setSiteGroups(body.value.filter((group: Group) => {
-              return group.OwnerTitle !== "System Account"
+              return group.OwnerTitle !== 'System Account'
             }))
             return Promise.resolve();
           })
@@ -259,11 +259,11 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     
     React.useEffect(() => {
       setChoiceUsers(siteUsers.filter((siteUser) => {
-        return siteUser.LoginName.startsWith("i:0#.f|membership|")
+        return siteUser.LoginName.startsWith('i:0#.f|membership|')
       }).map((item) => {return {...item, Id: `${item.Id}`}}))
 
       const groupUsers: IChoice[] = siteUsers.filter((siteUser) => {
-        return !siteUser.LoginName.startsWith("i:0#.f|membership|")
+        return !siteUser.LoginName.startsWith('i:0#.f|membership|')
       }).map((item) => {return {...item, Id: `${item.Id}`}})
       const groups: IChoice[] = siteGroups.map((item) => {return {...item, Id: `${item.Id}`}})
 
@@ -274,7 +274,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#region PDF
     //just a prototype for generating a pdf file to download
     //uncomment if used
-    /*const [fileUrl, fileUrlSet] = React.useState<string>("")
+    /*const [fileUrl, fileUrlSet] = React.useState<string>('')
     async function fillForm() {
       const pdfDoc = await PDFDocument.create()
       pdfDoc.setTitle('TestPdf')
@@ -327,7 +327,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           const listItems: IChoice[] = body.value
           acLstSet(listItems)
           for(const listItem of listItems){
-            if(item["LstLookupId"]?.toString() === listItem.Id.toString()){
+            if(item['LstLookupId']?.toString() === listItem.Id.toString()){
               LstSelectedSet(listItem)
             }
           }
@@ -346,7 +346,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     /* eslint-disable */
     const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
     React.useEffect(() => {
-      TitlePropsSet(getColProps("Title", cols))
+      TitlePropsSet(getColProps('Title', cols))
     }, [cols])
 
     const StringValSet = (value: string, valueName: string) => {
@@ -356,7 +356,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
     }
 
-    const TitleHandle = {value: item["Title"], setValue: (value: string) => StringValSet(value,'Title')}
+    const TitleHandle = {value: item['Title'], setValue: (value: string) => StringValSet(value,'Title')}
     /* eslint-enable */
   //#endregion
 
@@ -364,10 +364,13 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
       <form>
-        <TextCard id="Title" title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
+        <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
             required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
-        {props.displayMode !== FormDisplayMode.Display ? <button type="button" className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
-        <button type="button" className='button button-red' onClick={() => {props.onClose()}}>Close</button>
+        {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
+        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>Close</button>
+        <button type='button' className='button button-blue' onClick={() => {
+          console.log(props.context.item)
+        }}>Info</button>
       </form>
     </>
   )
