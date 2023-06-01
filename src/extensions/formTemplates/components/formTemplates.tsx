@@ -3,6 +3,10 @@ import { FC } from 'react'
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility'
+import { GraphFI } from '@pnp/graph'
+import { SPFI } from '@pnp/sp'
+import "@pnp/sp/site-users/web";
+import { User, Group } from "@microsoft/microsoft-graph-types";
 //import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
 import './formTemplates.module.css'
@@ -13,12 +17,16 @@ import './customFormStyles.css'
 
 import Error from './error'
 import TextCard from './cards/textCard'
+import { ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
+import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
   displayMode: FormDisplayMode;
   onSave: (item: {}, etag?: string) => Promise<void>;
   onClose: () => void;
+  graph: GraphFI
+  sp: SPFI
 }
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
@@ -360,6 +368,50 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     /* eslint-enable */
   //#endregion
 
+  const GetAllUsers = async (): Promise<ISiteUserProps[]> => {
+    let groups: Group[] = []
+    let users: User[] = []
+    let spUsers: ISiteUserProps[] = []
+
+    await props.graph.groups()
+    .then((data) => {
+      groups = data
+    }).catch((err) => {
+      console.error(err)
+    })
+
+    const group = groups.filter(g => g.displayName === 'All Users')[0]
+
+    await props.graph.groups.getById(group.id).members()
+    .then((data) => {
+      users = data
+    }).catch((err) => {
+      console.error(err)
+    })
+    
+    for (let index = 0; index < users.length; index++) {
+      await props.sp.web.ensureUser(users[index].userPrincipalName).then((result: IWebEnsureUserResult) => {
+        spUsers.push(result.data)
+      }).catch((err) => {
+        console.error(`Not a valid user: ${users[index].userPrincipalName}`)
+        console.error(err)
+      })
+    }
+
+    return spUsers
+  }
+
+  const CheckGroupMembership = async (userId: number, groupId: number): Promise<boolean> => {
+    const groups: ISiteGroupInfo[] = await props.sp.web.getUserById(userId).groups()
+    for (const group of groups){
+      if (group.Id === groupId) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   return (
     <>
       <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
@@ -368,8 +420,11 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
             required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
         {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type='button' className='button button-red' onClick={() => {props.onClose()}}>Close</button>
-        <button type='button' className='button button-blue' onClick={() => {
-          console.log(props.context.item)
+        <button type='button' className='button button-blue' onClick={async () => {
+          const all = await GetAllUsers()
+          console.log('Get all users')
+          console.log(all)
+          console.log(await CheckGroupMembership(6, 3))
         }}>Info</button>
       </form>
     </>

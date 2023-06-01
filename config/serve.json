@@ -7,8 +7,9 @@
       "pageUrl": "https://servisac.sharepoint.com/sites/ml/_layouts/15/SPListForm.aspx",
       "formCustomizer": {
         "componentId": "05459ba7-ba24-45da-be05-9b686a07aa21",
-        "PageType": 8,
         "RootFolder": "/sites/ml/Lists/acLstMain",
+        "PageType": 6,
+        "ID": 1,
         "properties": {}
       }
     },
@@ -16,8 +17,8 @@
       "pageUrl": "https://servisac.sharepoint.com/sites/ml/_layouts/15/SPListForm.aspx",
       "formCustomizer": {
         "componentId": "05459ba7-ba24-45da-be05-9b686a07aa21",
-        "PageType": 8,
         "RootFolder": "/sites/ml/Lists/acLstMain",
+        "PageType": 8,
         "properties": {}
       }
     },
@@ -25,8 +26,8 @@
       "pageUrl": "https://servisac.sharepoint.com/sites/ml/_layouts/15/SPListForm.aspx",
       "formCustomizer": {
         "componentId": "05459ba7-ba24-45da-be05-9b686a07aa21",
-        "PageType": 6,
         "RootFolder": "/sites/ml/Lists/acLstMain",
+        "PageType": 6,
         "ID": 1,
         "properties": {}
       }
@@ -35,8 +36,8 @@
       "pageUrl": "https://servisac.sharepoint.com/sites/ml/_layouts/15/SPListForm.aspx",
       "formCustomizer": {
         "componentId": "05459ba7-ba24-45da-be05-9b686a07aa21",
-        "PageType": 4,
         "RootFolder": "/sites/ml/Lists/acLstMain",
+        "PageType": 4,
         "ID": 1,
         "properties": {}
       }

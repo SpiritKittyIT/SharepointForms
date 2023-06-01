@@ -1,6 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import { SPFI, spfi, SPFx } from "@pnp/sp"
+import { LogLevel, PnPLogging } from "@pnp/logging"
+import "@pnp/sp/webs"
+import "@pnp/sp/lists"
+import "@pnp/sp/items"
+import "@pnp/sp/batching"
+
+import { GraphFI, graphfi, SPFx as graphSPFx } from "@pnp/graph"
+import "@pnp/graph/sites"
+import "@pnp/graph/groups"
+import "@pnp/graph/members"
 import { FormDisplayMode, Log } from '@microsoft/sp-core-library';
 import {
   SPHttpClient,
@@ -24,10 +35,16 @@ const LOG_SOURCE: string = 'FormTemplatesFormCustomizer';
 export default class FormTemplatesFormCustomizer
   extends BaseFormCustomizer<IFormTemplatesFormCustomizerProperties> {
 
+    private _graph: GraphFI = null
+    private _sp: SPFI = null
+
   public onInit(): Promise<void> {
     // The framework will wait for the returned promise to resolve before rendering the form.
     Log.info(LOG_SOURCE, 'Activated FormTemplatesFormCustomizer with properties:');
     Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2));
+    this._sp = spfi().using(SPFx(this.context)).using(PnPLogging(LogLevel.Warning))
+    this._graph = graphfi().using(graphSPFx(this.context)).using(PnPLogging(LogLevel.Warning))
+
     return Promise.resolve();
   }
 
@@ -37,7 +54,9 @@ export default class FormTemplatesFormCustomizer
         context: this.context,
         displayMode: this.displayMode,
         onSave: this._onSave,
-        onClose: this._onClose
+        onClose: this._onClose,
+        graph: this._graph,
+        sp: this._sp,
        } as IFormTemplatesProps);
 
     ReactDOM.render(formTemplates, this.domElement);

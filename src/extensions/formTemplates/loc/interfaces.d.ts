@@ -23,7 +23,7 @@ declare interface IHandle<T> {
   setValue: React.Dispatch<React.SetStateAction<T>>
 }
 
-declare interface User {
+declare interface FormUser {
   Id: number
   IsHiddenInUI: boolean
   LoginName: string
@@ -41,7 +41,7 @@ declare interface User {
   UserPrincipalName: string
 }
 
-declare interface Group {
+declare interface FormGroup {
   AllowMembersEditMembership: boolean
   AllowRequestToJoinLeave: boolean
   AutoAcceptRequestToJoinLeave: boolean
