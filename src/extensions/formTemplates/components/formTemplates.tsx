@@ -5,9 +5,9 @@ import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility'
 import { GraphFI } from '@pnp/graph'
 import { SPFI } from '@pnp/sp'
-import "@pnp/sp/site-users/web";
-import { User, Group } from "@microsoft/microsoft-graph-types";
-//import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import "@pnp/sp/site-users/web"
+import "@pnp/sp/site-groups/web"
+//import { User, Group } from "@microsoft/microsoft-graph-types"
 
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
@@ -17,8 +17,8 @@ import './customFormStyles.css'
 
 import Error from './error'
 import TextCard from './cards/textCard'
-import { ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
-import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
+//import { ISiteUserInfo, ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
+//import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -200,8 +200,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   //#region PEOPLE_GROUP
     //uncomment if used
-    /*const [siteUsers, setSiteUsers] = React.useState<User[]>([])
-    const [siteGroups, setSiteGroups] = React.useState<Group[]>([])
+    /*const [siteUsers, setSiteUsers] = React.useState<FormUser[]>([])
+    const [siteGroups, setSiteGroups] = React.useState<FormGroup[]>([])
     const [choiceUsers, setChoiceUsers] = React.useState<IChoice[]>([])
     const [choiceGroups, setChoiceGroups] = React.useState<IChoice[]>([])
 
@@ -221,7 +221,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
           }
         })
         .then(body => {
-          setSiteUsers(body.value.filter((user: User) => {
+          setSiteUsers(body.value.filter((user: FormUser) => {
             switch (user.LoginName) {
               case 'c:0(.s|true':
                 return false
@@ -240,30 +240,78 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         .catch(err => {
           console.error(err)
         })
-        props.context.spHttpClient
-          .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
-            headers: {
-              accept: 'application/json;odata.metadata=none'
-            }
-          })
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            }
-            else {
-              return Promise.reject(res.statusText);
-            }
-          })
-          .then(body => {
-            setSiteGroups(body.value.filter((group: Group) => {
-              return group.OwnerTitle !== 'System Account'
-            }))
-            return Promise.resolve();
-          })
-          .catch(err => {
-            console.error(err)
-          })
+      props.context.spHttpClient
+        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
+          headers: {
+            accept: 'application/json;odata.metadata=none'
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          }
+          else {
+            return Promise.reject(res.statusText);
+          }
+        })
+        .then(body => {
+          setSiteGroups(body.value.filter((group: FormGroup) => {
+            return group.OwnerTitle !== 'System Account'
+          }))
+          return Promise.resolve();
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }, [props])
+
+    const GetGroupUsers = async (spGroupId: number): Promise<ISiteUserProps[]> => {
+      const spUsers: ISiteUserProps[] = []
+      const userPrincipalNames: Set<string> = new Set()
+
+      const spGroupMembers: ISiteUserInfo[] = await props.sp.web.siteGroups.getById(spGroupId).users()
+
+      for (let index = 0; index < spGroupMembers.length; index++) {
+        const loginName = spGroupMembers[index].LoginName.split('|')
+        if (loginName.length !== 3) {continue}
+        if (loginName[1] === 'membership') {
+          userPrincipalNames.add(spGroupMembers[index].UserPrincipalName)
+        }
+        if (loginName[1] === 'tenant' || loginName[1] === 'federateddirectoryclaimprovider') {
+          await props.graph.groups.getById(loginName[2]).members()
+            .then((data) => {
+              const users: User[] = data
+              users.forEach((user) => {
+                userPrincipalNames.add(user.userPrincipalName)
+              })
+            }).catch((err) => {
+              console.error(err)
+            })
+        }
+      }
+      const names = Array.from(userPrincipalNames)
+      
+      for (let index = 0; index < names.length; index++) {
+        await props.sp.web.ensureUser(names[index]).then((result: IWebEnsureUserResult) => {
+          spUsers.push(result.data)
+        }).catch((err) => {
+          console.error(`Nepodarilo sa nájsť zadaného používateľa: ${names[index]}`)
+        })
+      }
+  
+      return spUsers
+    }
+  
+    const CheckGroupMembership = async (groupId: number): Promise<boolean> => {
+      let result = false
+      await props.sp.web.currentUser.groups.getById(groupId)().then((found) => {
+        result = true
+      }).catch(() => {
+        result = false
+      })
+  
+      return result
+    }
     
     React.useEffect(() => {
       setChoiceUsers(siteUsers.filter((siteUser) => {
@@ -279,79 +327,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }, [siteUsers, siteGroups])*/
   //#endregion
 
-  //#region PDF
-    //just a prototype for generating a pdf file to download
-    //uncomment if used
-    /*const [fileUrl, fileUrlSet] = React.useState<string>('')
-    async function fillForm() {
-      const pdfDoc = await PDFDocument.create()
-      pdfDoc.setTitle('TestPdf')
-      const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-
-      const page = pdfDoc.addPage()
-      const { width, height } = page.getSize()
-      const fontSize = 30
-      page.drawText('Creating PDFs in JavaScript is awesome!', {
-        x: width*0 + 50,
-        y: height - 4 * fontSize,
-        size: fontSize,
-        font: timesRomanFont,
-        color: rgb(0, 0.53, 0.71),
-      })
-
-      const blob = new Blob([await pdfDoc.save()], {type: 'application/pdf'})
-      fileUrlSet(URL.createObjectURL(blob))
-    }
-
-    React.useEffect(() => {
-      fillForm()
-    }, [cols])*/
-  //#endregion
-
-
-  //#region LOOKUP
-    //uncomment if used
-    /* eslint-disable */
-    /*const [Lst, acLstSet] = React.useState<IChoice[]>([])
-    const [LstSelected, LstSelectedSet] = React.useState<IChoice>()
-
-    React.useEffect(() => {
-      props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/getbyid('3b8e8b9e-8abf-43cd-b9ea-46359a784bc6')/items`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          if(!body.value) {return}
-          const listItems: IChoice[] = body.value
-          acLstSet(listItems)
-          for(const listItem of listItems){
-            if(item['LstLookupId']?.toString() === listItem.Id.toString()){
-              LstSelectedSet(listItem)
-            }
-          }
-          return Promise.resolve();
-        })
-        .catch(err => {
-          console.error(err)
-        })
-    }, [props, keys])*/
-    /* eslint-enable */
-  //#endregion
-
   // Enter your code here
 
   //#region FORM_CODE
-    /* eslint-disable */
     const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
     React.useEffect(() => {
       TitlePropsSet(getColProps('Title', cols))
@@ -365,52 +343,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }
 
     const TitleHandle = {value: item['Title'], setValue: (value: string) => StringValSet(value,'Title')}
-    /* eslint-enable */
   //#endregion
-
-  const GetAllUsers = async (): Promise<ISiteUserProps[]> => {
-    let groups: Group[] = []
-    let users: User[] = []
-    let spUsers: ISiteUserProps[] = []
-
-    await props.graph.groups()
-    .then((data) => {
-      groups = data
-    }).catch((err) => {
-      console.error(err)
-    })
-
-    const group = groups.filter(g => g.displayName === 'All Users')[0]
-
-    await props.graph.groups.getById(group.id).members()
-    .then((data) => {
-      users = data
-    }).catch((err) => {
-      console.error(err)
-    })
-    
-    for (let index = 0; index < users.length; index++) {
-      await props.sp.web.ensureUser(users[index].userPrincipalName).then((result: IWebEnsureUserResult) => {
-        spUsers.push(result.data)
-      }).catch((err) => {
-        console.error(`Not a valid user: ${users[index].userPrincipalName}`)
-        console.error(err)
-      })
-    }
-
-    return spUsers
-  }
-
-  const CheckGroupMembership = async (userId: number, groupId: number): Promise<boolean> => {
-    const groups: ISiteGroupInfo[] = await props.sp.web.getUserById(userId).groups()
-    for (const group of groups){
-      if (group.Id === groupId) {
-        return true
-      }
-    }
-
-    return false
-  }
 
   return (
     <>
@@ -421,10 +354,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
         <button type='button' className='button button-red' onClick={() => {props.onClose()}}>Close</button>
         <button type='button' className='button button-blue' onClick={async () => {
-          const all = await GetAllUsers()
           console.log('Get all users')
-          console.log(all)
-          console.log(await CheckGroupMembership(6, 3))
         }}>Info</button>
       </form>
     </>
