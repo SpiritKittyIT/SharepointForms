@@ -1,13 +1,16 @@
 import * as React from 'react'
 import { FC } from 'react'
 import { FormDisplayMode } from '@microsoft/sp-core-library'
-import { SPHttpClient } from '@microsoft/sp-http'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility'
 import { GraphFI } from '@pnp/graph'
 import { SPFI } from '@pnp/sp'
 import "@pnp/sp/site-users/web"
 import "@pnp/sp/site-groups/web"
-//import { User, Group } from "@microsoft/microsoft-graph-types"
+import "@pnp/sp/webs"
+import "@pnp/sp/lists"
+import "@pnp/sp/items"
+import "@pnp/sp/fields"
+// import { User, Group } from "@microsoft/microsoft-graph-types"
 
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
@@ -17,8 +20,8 @@ import './customFormStyles.css'
 
 import Error from './error'
 import TextCard from './cards/textCard'
-//import { ISiteUserInfo, ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
-//import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
+// import { ISiteUserInfo, ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
+// import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -33,19 +36,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#region TEMPLATE_STATES
     const [item, setItem] = React.useState<{[key: string]:any}>(props.displayMode === FormDisplayMode.New ? {} : props.context.item) // eslint-disable-line @typescript-eslint/no-explicit-any
     const [cols, setCols] = React.useState<IColProps[]>([])
-    const [keys, setKeys] = React.useState<string[]>([])
     const [show, setShow] = React.useState<boolean>(false)
     const [errorMessage, setErrorMessage] = React.useState<string>('')
   //#endregion
 
   //#region TEMPLATE_FUNCTIONS
-    const contains: <A,V>(arr: A[], val: V, getVal?: (x: A) => V) => boolean
-                  = <A,V>(arr: A[], val: V, getVal = (x: A) => {return x as unknown as V}) => {
-      for (const arrItem of arr){
-        if (getVal(arrItem) === val) {return true}
-      }
-      return false
-    }
+    // const contains: <A,V>(arr: A[], val: V, getVal?: (x: A) => V) => boolean
+    //               = <A,V>(arr: A[], val: V, getVal = (x: A) => {return x as unknown as V}) => {
+    //   for (const arrItem of arr){
+    //     if (getVal(arrItem) === val) {return true}
+    //   }
+    //   return false
+    // }
 
     const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
       let result: (IColProps | null) = null
@@ -65,13 +67,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         setShow(true)
         return
       }
-      const itemKeys = Object.keys(item)
-      itemKeys.forEach((colName) => {
-        if (!contains(keys, colName)) {
-          delete item[colName]
-          return
-        }
-      })
       const cardErrors = document.getElementsByClassName('card-error')
       if (cardErrors.length > 0) { valid = false }
       for (let i = 0; i < cardErrors.length; i++) {
@@ -83,29 +78,12 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         return
       }
       let etag: string = ''
-      await props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Items(${props.context.itemId})`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            const e = res.headers.get('ETag')
-            etag = e ? e : ''
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          return Promise.resolve();
-        })
-        .catch(err => {
-          setShow(true)
-          console.error(err)
-        })
+      await props.sp.web.lists.getById(props.context.list.guid.toString()).items.getById(5)().then((val) => {
+        etag = val['odata.etag']
+      }).catch((error) => {
+        console.error(error)
+      })
+
       await props.onSave(item, etag).catch((error: Error) => {
         if (error.message.indexOf('The request ETag value') !== -1){
           setErrorMessage(`${newErrorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
@@ -119,77 +97,22 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#endregion
 
   //#region ON_LOAD
-    const keySettings = {
-      add:[
-        'FileSystemObjectType',
-        'Id',
-        'ServerRedirectedEmbedUri',
-        'ServerRedirectedEmbedUrl',
-        'OData__UIVersionString',
-        'GUID'
-      ],
-      skipName:[
-        '@odata.context',
-        '@odata.editLink',
-        '@odata.etag',
-        '@odata.id',
-        '@odata.type',
-        '_UIVersionString',
-        'Edit',
-        'LinkTitleNoMenu',
-        'LinkTitle',
-        'DocIcon',
-        'ItemChildCount',
-        'FolderChildCount',
-        '_ComplianceFlags',
-        '_ComplianceTag',
-        '_ComplianceTagWrittenTime',
-        '_ComplianceTagUserId',
-        '_IsRecord',
-        'AppAuthor',
-        'AppEditor'
-      ],
-      idOnlyName:[
-        'ContentType',
-        'Author',
-        'Editor'
-      ],
-      idOnly:[
-        'Lookup'
-      ],
-      stringId:[
-        'User',
-        'UserMulti'
-      ]
-    }
-
     React.useEffect(() => {
-      props.context.spHttpClient
-      .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/lists/GetById('${props.context.list.guid}')/Fields?$filter=Hidden eq false`, SPHttpClient.configurations.v1, {
-        headers: {
-          accept: 'application/json;odata.metadata=none'
-        }
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        else {
-          return Promise.reject(res.statusText);
-        }
-      })
-      .then(body => {
-        setCols(body.value)
-        setKeys(keySettings.add.concat(body.value.flatMap((field: IColProps) => {
-          if (contains(keySettings.skipName, field.InternalName)) { return [] }
-          if (contains(keySettings.idOnlyName, field.InternalName)) { return `${field.InternalName}Id` }
-          if (contains(keySettings.idOnly, field.TypeAsString)) { return `${field.InternalName}Id` }
-          if (contains(keySettings.stringId, field.TypeAsString)) {
-            return [`${field.InternalName}Id`, `${field.InternalName}StringId`]
-          }
-          return field.InternalName
-        })))
-        return Promise.resolve();
+      const removeFields = ['@odata.context', '@odata.editLink', '@odata.metadata', '@odata.etag', '@odata.id', '@odata.type',
+        'OData__ColorTag', 'OData__dlc_DocId', 'OData__dlc_DocIdUrl', 'OData__CopySource', 'OData__UIVersionString',
+        'MediaServiceImageTags', 'MediaServiceOCR', 'acColButtons']
+  
+      if (props.displayMode !== FormDisplayMode.New ) {
+        let tmpItem = item
+        removeFields.forEach(removeField => {
+          delete tmpItem[removeField]
+        })
+        setItem(tmpItem)
+      }
+    
+      props.sp.web.lists.getById(props.context.list.guid.toString()).fields.filter('Hidden eq false')()
+      .then((fields) => {
+        setCols(fields)
       })
       .catch(err => {
         setShow(true)
@@ -200,72 +123,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   //#region PEOPLE_GROUP
     //uncomment if used
-    /*const [siteUsers, setSiteUsers] = React.useState<FormUser[]>([])
-    const [siteGroups, setSiteGroups] = React.useState<FormGroup[]>([])
-    const [choiceUsers, setChoiceUsers] = React.useState<IChoice[]>([])
-    const [choiceGroups, setChoiceGroups] = React.useState<IChoice[]>([])
-
-    React.useEffect(() => {
-      props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/siteusers`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          setSiteUsers(body.value.filter((user: FormUser) => {
-            switch (user.LoginName) {
-              case 'c:0(.s|true':
-                return false
-              case 'i:0#.w|nt service\\spsearch':
-                return false
-              case 'i:0i.t|00000003-0000-0ff1-ce00-000000000000|app@sharepoint':
-                return false
-              case 'SHAREPOINT\\system':
-                return false
-              default:
-                return true
-            }
-          }))
-          return Promise.resolve();
-        })
-        .catch(err => {
-          console.error(err)
-        })
-      props.context.spHttpClient
-        .get(`${props.context.pageContext.web.absoluteUrl}/_api/web/sitegroups`, SPHttpClient.configurations.v1, {
-          headers: {
-            accept: 'application/json;odata.metadata=none'
-          }
-        })
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-          else {
-            return Promise.reject(res.statusText);
-          }
-        })
-        .then(body => {
-          setSiteGroups(body.value.filter((group: FormGroup) => {
-            return group.OwnerTitle !== 'System Account'
-          }))
-          return Promise.resolve();
-        })
-        .catch(err => {
-          console.error(err)
-        })
-    }, [props])
-
-    const GetGroupUsers = async (spGroupId: number): Promise<ISiteUserProps[]> => {
+    /*const GetGroupUsers = async (spGroupId: number): Promise<ISiteUserProps[]> => {
       const spUsers: ISiteUserProps[] = []
       const userPrincipalNames: Set<string> = new Set()
 
@@ -311,20 +169,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
   
       return result
-    }
-    
-    React.useEffect(() => {
-      setChoiceUsers(siteUsers.filter((siteUser) => {
-        return siteUser.LoginName.startsWith('i:0#.f|membership|')
-      }).map((item) => {return {...item, Id: `${item.Id}`}}))
-
-      const groupUsers: IChoice[] = siteUsers.filter((siteUser) => {
-        return !siteUser.LoginName.startsWith('i:0#.f|membership|')
-      }).map((item) => {return {...item, Id: `${item.Id}`}})
-      const groups: IChoice[] = siteGroups.map((item) => {return {...item, Id: `${item.Id}`}})
-
-      setChoiceGroups(groups.concat(groupUsers))
-    }, [siteUsers, siteGroups])*/
+    }*/
   //#endregion
 
   // Enter your code here
