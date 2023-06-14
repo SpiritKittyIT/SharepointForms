@@ -100,7 +100,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     React.useEffect(() => {
       const removeFields = ['@odata.context', '@odata.editLink', '@odata.metadata', '@odata.etag', '@odata.id', '@odata.type',
         'OData__ColorTag', 'OData__dlc_DocId', 'OData__dlc_DocIdUrl', 'OData__CopySource', 'OData__UIVersionString',
-        'MediaServiceImageTags', 'MediaServiceOCR', 'acColButtons']
+        'MediaServiceImageTags', 'MediaServiceOCR']
   
       if (props.displayMode !== FormDisplayMode.New ) {
         let tmpItem = item
