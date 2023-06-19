@@ -160,13 +160,6 @@ module.exports = {
         '@typescript-eslint/no-empty-interface': 0,
         // RATIONALE:         This rule warns if setters are defined without getters, which is probably a mistake.
         'accessor-pairs': 1,
-        // RATIONALE:         In TypeScript, if you write x["y"] instead of x.y, it disables type checking.
-        'dot-notation': [
-          1,
-          {
-            'allowPattern': '^_'
-          }
-        ],
         // RATIONALE:         Catches code that is likely to be incorrect
         'eqeqeq': 1,
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js

@@ -103,7 +103,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         'MediaServiceImageTags', 'MediaServiceOCR']
   
       if (props.displayMode !== FormDisplayMode.New ) {
-        let tmpItem = item
+        const tmpItem = item
         removeFields.forEach(removeField => {
           delete tmpItem[removeField]
         })
@@ -180,7 +180,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       TitlePropsSet(getColProps('Title', cols))
     }, [cols])
 
-    const StringValSet = (value: string, valueName: string) => {
+    const StringValSet = (value: string, valueName: string): void => {
       setItem({
         ...item,
         [valueName]: value,
