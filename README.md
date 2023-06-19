@@ -77,6 +77,8 @@ Short summary on functionality and used technologies.
     - package-solution.json: id
   - GUID 2:
     - formTemplatesFormCustomizer.manifest.json: Id
+    - serve.json
+    - README.md
   - names:
     - package-solution.json
     - package.json
