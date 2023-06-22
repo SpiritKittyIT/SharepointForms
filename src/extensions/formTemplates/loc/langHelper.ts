@@ -2,7 +2,7 @@ export interface ILang{
   Buttons: {
     Save: string
     Edit: string
-    close: string
+    Close: string
   }
   Cards: {
     RenderError: string
@@ -16,6 +16,9 @@ export interface ILang{
   }
   Display: {
     RenderError: string
+  }
+  Helper: {
+    UserNotFound: string
   }
 }
 

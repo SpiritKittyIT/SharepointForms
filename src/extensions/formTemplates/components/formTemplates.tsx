@@ -10,19 +10,17 @@ import '@pnp/sp/webs'
 import '@pnp/sp/lists'
 import '@pnp/sp/items'
 import '@pnp/sp/fields'
-// import { User, Group } from '@microsoft/microsoft-graph-types'
 
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
 import './dataDisplays/dataDisplayStyles.css'
 import './customFormStyles.css'
-//import { localeCurrencies } from '../loc/dictionaries'
+//import { localeCurrencies } from '../help/dictionaries'
 
 import Error from './error'
 import TextCard from './cards/textCard'
 import { ILang, getLangStrings } from '../loc/langHelper'
-// import { ISiteUserInfo, ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
-// import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
+import { GetColProps } from '../help/helperFunctions'
 
 export const LocaleStrings: ILang = getLangStrings('en')
 
@@ -44,24 +42,6 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#endregion
   
   //#region TEMPLATE_FUNCTIONS
-    // const contains: <A,V>(arr: A[], val: V, getVal?: (x: A) => V) => boolean
-    //               = <A,V>(arr: A[], val: V, getVal = (x: A) => {return x as unknown as V}) => {
-    //   for (const arrItem of arr){
-    //     if (getVal(arrItem) === val) {return true}
-    //   }
-    //   return false
-    // }
-
-    const getColProps: (colName: string, cols: IColProps[]) => (IColProps | null) = (colName, cols) => {
-      let result: (IColProps | null) = null
-      cols.forEach(col => {
-        if (col.InternalName === colName) {
-          result = col
-        }
-      })
-      return result
-    }
-
     const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
       let valid = true
       let newErrorMessage = 'There were errors during form submission:'
@@ -124,63 +104,12 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }, [props])
   //#endregion
 
-  //#region PEOPLE_GROUP
-    //uncomment if used
-    /*const GetGroupUsers = async (spGroupId: number): Promise<ISiteUserProps[]> => {
-      const spUsers: ISiteUserProps[] = []
-      const userPrincipalNames: Set<string> = new Set()
-
-      const spGroupMembers: ISiteUserInfo[] = await props.sp.web.siteGroups.getById(spGroupId).users()
-
-      for (let index = 0; index < spGroupMembers.length; index++) {
-        const loginName = spGroupMembers[index].LoginName.split('|')
-        if (loginName.length !== 3) {continue}
-        if (loginName[1] === 'membership') {
-          userPrincipalNames.add(spGroupMembers[index].UserPrincipalName)
-        }
-        if (loginName[1] === 'tenant' || loginName[1] === 'federateddirectoryclaimprovider') {
-          await props.graph.groups.getById(loginName[2]).members()
-            .then((data) => {
-              const users: User[] = data
-              users.forEach((user) => {
-                userPrincipalNames.add(user.userPrincipalName)
-              })
-            }).catch((err) => {
-              console.error(err)
-            })
-        }
-      }
-      const names = Array.from(userPrincipalNames)
-      
-      for (let index = 0; index < names.length; index++) {
-        await props.sp.web.ensureUser(names[index]).then((result: IWebEnsureUserResult) => {
-          spUsers.push(result.data)
-        }).catch((err) => {
-          console.error(`Nepodarilo sa nájsť zadaného používateľa: ${names[index]}`)
-        })
-      }
-  
-      return spUsers
-    }
-  
-    const CheckGroupMembership = async (groupId: number): Promise<boolean> => {
-      let result = false
-      await props.sp.web.currentUser.groups.getById(groupId)().then((found) => {
-        result = true
-      }).catch(() => {
-        result = false
-      })
-  
-      return result
-    }*/
-  //#endregion
-
   // Enter your code here
 
   //#region FORM_CODE
     const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
     React.useEffect(() => {
-      TitlePropsSet(getColProps('Title', cols))
+      TitlePropsSet(GetColProps('Title', cols))
     }, [cols])
 
     const StringValSet = (value: string, valueName: string): void => {
@@ -200,7 +129,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
             required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
         {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</button> : <></>}
-        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.close}</button>
+        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.Close}</button>
         <button type='button' className='button button-blue' onClick={async () => {
           console.log('Get all users')
         }}>Info</button>

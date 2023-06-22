@@ -16,5 +16,8 @@
   },
   "Display": {
     "RenderError": "Sorry, something went wrong with this data display. This data display can not be rendered properly."
+  },
+  "Helper": {
+    "UserNotFound": "User not found"
   }
 }
