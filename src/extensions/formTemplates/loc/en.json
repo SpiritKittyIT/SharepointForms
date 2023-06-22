@@ -1,0 +1,20 @@
+{
+  "Buttons": {
+    "Save": "Save",
+    "Edit": "Edit",
+    "Close": "Close"
+  },
+  "Cards": {
+    "RenderError": "Sorry, something went wrong with this form card. This card can not be rendered properly.",
+    "ThisField": "this field",
+    "PleaseFill": "Please fill",
+    "Select": "Select",
+    "Placeholder": "Start Typing...",
+    "ThisValue": "This value",
+    "CanNotLower": "can not be lower than",
+    "CanNotHigher": "can not be higher than"
+  },
+  "Display": {
+    "RenderError": "Sorry, something went wrong with this data display. This data display can not be rendered properly."
+  }
+}

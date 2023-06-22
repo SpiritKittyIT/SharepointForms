@@ -6,6 +6,7 @@ import '../../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg
 import './cardRichRwdStyles.css'
 import htmlToDraft from 'html-to-draftjs'
 import draftToHtml from 'draftjs-to-html'
+import { LocaleStrings } from '../formTemplates'
 
 interface ITextRichCard {
     id: string
@@ -17,7 +18,7 @@ interface ITextRichCard {
 }
 
 const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
   const [editorState, setEditorState] = React.useState<EditorState>(EditorState.createEmpty())
   const spanRef = React.useRef<HTMLSpanElement>(null);
 
@@ -44,7 +45,7 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
     setErrorMessage(valueVerify(itemHandle.value))
@@ -92,7 +93,7 @@ const TextRichCard: React.FC<ITextRichCard> = ({id, title, displayMode, required
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

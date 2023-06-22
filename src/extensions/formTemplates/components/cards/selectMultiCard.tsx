@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface IDropDownMultiCard {
   id: string
@@ -20,9 +21,9 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
         setActive(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
 }
@@ -30,9 +31,9 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
 const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode, required, itemHandle, choices, selected,
                                                           choiceFilter = (choice) => true, getDisplayText = (choice) => {return choice.Title}}) => {
   const wrapperRef = React.useRef(null)
-  const [search, setSearch] = React.useState<string>("")
+  const [search, setSearch] = React.useState<string>('')
   const [active, setActive] = React.useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   useOutsideHider(wrapperRef, setActive)
 
@@ -58,7 +59,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
   }, [itemHandle.value, required])
@@ -67,7 +68,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className="card-select-menu">
+        <div id={id} ref={wrapperRef} className='card-select-menu'>
           <div className={`card-dropdown-input-d ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             { selected.value.length > 0
               ? selected.value.map((item) => {return (
@@ -75,7 +76,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                   <div className='card-selected-value'>{getDisplayText(item)}</div>
                 </div>
                 )}) 
-              : `Select ${title}...`}
+              : ``}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-filter-selected-d ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
@@ -85,7 +86,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                     <div className='card-selected-value'>{getDisplayText(item)}</div>
                   </div>
                   )})
-                : `Select ${title}...`}
+                : ``}
             </div>
           </div>
         </div>
@@ -94,7 +95,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className="card-select-menu">
+        <div id={id} ref={wrapperRef} className='card-select-menu'>
           <div className={`card-dropdown-input ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             { selected.value.length > 0
               ? selected.value.map((item) => {return (
@@ -102,7 +103,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                   <div className='card-selected-value'>{getDisplayText(item)}</div>
                 </div>
                 )}) 
-                : `Select ${title}...`}
+                : `${LocaleStrings.Cards.Select} ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-filter-selected ${itemHandle.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
@@ -113,19 +114,19 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
                     <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); unSelect(item.Id)}}>X</div>
                   </div>
                   )})
-                : `Select ${title}...`}
+                : `${LocaleStrings.Cards.Select} ${title}...`}
             </div>
-            <div className="card-select-filter">
-              <input type="text" className="card-select-input" placeholder="Start Typing..." value={search} onChange={(event) => {setSearch(event.target.value)}} />
+            <div className='card-select-filter'>
+              <input type='text' className='card-select-input' placeholder={LocaleStrings.Cards.Placeholder} value={search} onChange={(event) => {setSearch(event.target.value)}} />
             </div>
-            <div className="card-select-options">
+            <div className='card-select-options'>
               { choices?.filter((choice) => {
                   return choiceFilter(choice) && getDisplayText(choice).toLowerCase().indexOf(search.toLowerCase()) >= 0
                 })
                 .map((choice) => {return(
-                  <div className="option" key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
-                    <input type="checkbox" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={isSelected(choice.Id)} onChange={(event) => {select(choice)}} />
-                    <label className="option-label" htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
+                  <div className='option' key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
+                    <input type='checkbox' className='radio' id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={isSelected(choice.Id)} onChange={(event) => {select(choice)}} />
+                    <label className='option-label' htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
                   </div>
                 )})
               }
@@ -139,7 +140,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

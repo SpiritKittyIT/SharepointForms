@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface ISelectCard {
     id: string
@@ -20,9 +21,9 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
         setActive(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
 }
@@ -30,9 +31,9 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
 const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, itemHandle, choices, selected,
                                             choiceFilter = (choice) => true, getDisplayText = (choice) => {return choice.Title}}) => {
   const wrapperRef = React.useRef(null)
-  const [search, setSearch] = React.useState<string>("")
+  const [search, setSearch] = React.useState<string>('')
   const [active, setActive] = React.useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   useOutsideHider(wrapperRef, setActive)
   
@@ -43,7 +44,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
   }, [itemHandle.value, required])
@@ -52,13 +53,13 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
     return displayMode === FormDisplayMode.Display ? (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className="card-select-menu">
+        <div id={id} ref={wrapperRef} className='card-select-menu'>
           <div className={`card-dropdown-input-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             { selected.value
               ? <div className='card-selected'>
                   <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                 </div>
-              : `Select ${title}...`}
+              : ``}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-filter-selected-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
@@ -66,7 +67,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
                 ? <div className='card-selected'>
                     <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                   </div>
-                : `Select ${title}...`}
+                : ``}
             </div>
           </div>
         </div>
@@ -75,34 +76,34 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
     : (
       <div className='card'>
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className="card-select-menu">
+        <div id={id} ref={wrapperRef} className='card-select-menu'>
           <div className={`card-dropdown-input ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
             {selected.value
               ? <div className='card-selected'>
                   <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
                 </div>
-                : `Select ${title}...`}
+                : `${LocaleStrings.Cards.Select} ${title}...`}
           </div>
           <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
             <div className={`card-filter-selected ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
               {selected.value
                 ? <div className='card-selected'>
                     <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
-                    <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); setSelected(null)}}>X</div>
+                    <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); setSelected(null); setActive(false)}}>X</div>
                   </div>
-                : `Select ${title}...`}
+                : `${LocaleStrings.Cards.Select} ${title}...`}
             </div>
-            <div className="card-select-filter">
-              <input type="text" className="card-select-input" placeholder="Start Typing..." value={search} onChange={(event) => {setSearch(event.target.value)}} />
+            <div className='card-select-filter'>
+              <input type='text' className='card-select-input' placeholder={LocaleStrings.Cards.Placeholder} value={search} onChange={(event) => {setSearch(event.target.value)}} />
             </div>
-            <div className="card-select-options">
+            <div className='card-select-options'>
               { choices?.filter((choice) => {
                   return choiceFilter(choice) && getDisplayText(choice).toLowerCase().indexOf(search.toLowerCase()) >= 0
                 })
                 .map((choice: IChoice) => {return(
-                  <div className="option" key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
-                    <input type="radio" className="radio" id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={choice.Id === selected.value?.Id} onChange={(event) => {setSelected(choice)}} />
-                    <label className="option-label" htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
+                  <div className='option' key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
+                    <input type='radio' className='radio' id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={choice.Id === selected.value?.Id} onChange={(event) => {setSelected(choice); setActive(false)}} />
+                    <label className='option-label' htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
                   </div>
                 )})
               }
@@ -116,7 +117,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

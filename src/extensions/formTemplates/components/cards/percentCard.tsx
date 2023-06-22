@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface IPercentCard {
   id: string
@@ -13,14 +14,18 @@ interface IPercentCard {
 }
 
 const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}, minValue, maxValue}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
     itemHandle.setValue(+event.target.value / 100)
   }
 
   React.useEffect(() => {
-    setErrorMessage(`${valueVerify(itemHandle.value)}${(required && !itemHandle.value) ? `${title ? title : 'This field'} can not be left empty` : ''}`)
+    if (required && !itemHandle.value) {
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
+      return
+    }
+    setErrorMessage(valueVerify(itemHandle.value))
   }, [itemHandle.value, required])
 
   try {
@@ -54,7 +59,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

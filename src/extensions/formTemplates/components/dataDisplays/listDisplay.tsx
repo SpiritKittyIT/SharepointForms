@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface IListDisplay<T> {
   id: string
@@ -35,7 +36,7 @@ const ListDisplay: React.FC<IListDisplay<object>> = ({id, headerList, dataList, 
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this data display. This data display can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Display.RenderError}</div>
     )
   }
 };

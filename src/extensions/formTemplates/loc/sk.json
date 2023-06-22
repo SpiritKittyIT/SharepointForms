@@ -1,0 +1,20 @@
+{
+  "Buttons": {
+    "Save": "OK",
+    "Edit": "Upraviť",
+    "Close": "Zrušiť"
+  },
+  "Cards": {
+    "RenderError": "Prepáčte, niečo sa pokazilo s touto kartou formuláru. Táto karta sa nedá zobraziť správne.",
+    "ThisField": "toto pole",
+    "PleaseFill": "Prosím vyplnte",
+    "Select": "Vyberte",
+    "Placeholder": "Začnite písať...",
+    "ThisValue": "Táto hodnota",
+    "CanNotLower": "nemôže byť menšia než",
+    "CanNotHigher": "nemôže byť väčšia než"
+  },
+  "Display": {
+    "RenderError": "Prepáčte, niečo sa pokazilo s týmto zobrazením dát. Toto zobrazenie dát sa nedá správne načítať."
+  }
+}

@@ -1,27 +1,27 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
-import { SPFI, spfi, SPFx } from "@pnp/sp"
-import { LogLevel, PnPLogging } from "@pnp/logging"
-import "@pnp/sp/webs"
-import "@pnp/sp/lists"
-import "@pnp/sp/items"
-import "@pnp/sp/batching"
+import { SPFI, spfi, SPFx } from '@pnp/sp'
+import { LogLevel, PnPLogging } from '@pnp/logging'
+import '@pnp/sp/webs'
+import '@pnp/sp/lists'
+import '@pnp/sp/items'
+import '@pnp/sp/batching'
 
-import { GraphFI, graphfi, SPFx as graphSPFx } from "@pnp/graph"
-import "@pnp/graph/sites"
-import "@pnp/graph/groups"
-import "@pnp/graph/members"
-import { FormDisplayMode, Log } from '@microsoft/sp-core-library';
+import { GraphFI, graphfi, SPFx as graphSPFx } from '@pnp/graph'
+import '@pnp/graph/sites'
+import '@pnp/graph/groups'
+import '@pnp/graph/members'
+import { FormDisplayMode, Log } from '@microsoft/sp-core-library'
 import {
   SPHttpClient,
   SPHttpClientResponse
 } from '@microsoft/sp-http'
 import {
   BaseFormCustomizer
-} from '@microsoft/sp-listview-extensibility';
+} from '@microsoft/sp-listview-extensibility'
 
-import FormTemplates, { IFormTemplatesProps } from './components/formTemplates';
+import FormTemplates, { IFormTemplatesProps } from './components/formTemplates'
 
 /**
  * If your form customizer uses the ClientSideComponentProperties JSON input,
@@ -30,22 +30,22 @@ import FormTemplates, { IFormTemplatesProps } from './components/formTemplates';
  */
 export interface IFormTemplatesFormCustomizerProperties {}
 
-const LOG_SOURCE: string = 'FormTemplatesFormCustomizer';
+const LOG_SOURCE: string = 'FormTemplatesFormCustomizer'
 
 export default class FormTemplatesFormCustomizer
   extends BaseFormCustomizer<IFormTemplatesFormCustomizerProperties> {
 
-    private _graph: GraphFI = null
-    private _sp: SPFI = null
+  private _graph: GraphFI
+  private _sp: SPFI
 
   public onInit(): Promise<void> {
     // The framework will wait for the returned promise to resolve before rendering the form.
-    Log.info(LOG_SOURCE, 'Activated FormTemplatesFormCustomizer with properties:');
-    Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2));
+    Log.info(LOG_SOURCE, 'Activated FormTemplatesFormCustomizer with properties:')
+    Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2))
     this._sp = spfi().using(SPFx(this.context)).using(PnPLogging(LogLevel.Warning))
     this._graph = graphfi().using(graphSPFx(this.context)).using(PnPLogging(LogLevel.Warning))
 
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
   public render(): void {
@@ -57,41 +57,41 @@ export default class FormTemplatesFormCustomizer
         onClose: this._onClose,
         graph: this._graph,
         sp: this._sp,
-       } as IFormTemplatesProps);
+       } as IFormTemplatesProps)
 
-    ReactDOM.render(formTemplates, this.domElement);
+    ReactDOM.render(formTemplates, this.domElement)
   }
 
   public onDispose(): void {
     // This method should be used to free any resources that were allocated during rendering.
-    ReactDOM.unmountComponentAtNode(this.domElement);
-    super.onDispose();
+    ReactDOM.unmountComponentAtNode(this.domElement)
+    super.onDispose()
   }
 
   private _onSave = async (item: {}, etag: string): Promise<void> => {
     // disable all input elements while we're saving the item
-    this.domElement.querySelectorAll('input').forEach(el => el.setAttribute('disabled', 'disabled'));
+    this.domElement.querySelectorAll('input').forEach(el => el.setAttribute('disabled', 'disabled'))
   
     let request: Promise<SPHttpClientResponse> = new Promise<SPHttpClientResponse>(() => {return})
   
     switch (this.displayMode) {
       case FormDisplayMode.New:
-        request = this._createItem(item);
-        break;
+        request = this._createItem(item)
+        break
       case FormDisplayMode.Edit:
-        request = this._updateItem(item, etag);
+        request = this._updateItem(item, etag)
     }
   
-    const res: SPHttpClientResponse = await request;
+    const res: SPHttpClientResponse = await request
   
     if (res.ok) {
       // You MUST call this.formSaved() after you save the form.
-      this.formSaved();
+      this.formSaved()
     }
     else {
-      const error: { error: { message: string } } = await res.json();
+      const error: { error: { message: string } } = await res.json()
       
-      this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'));
+      this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
       throw new Error(error.error.message)
     }
   }
@@ -103,7 +103,7 @@ export default class FormTemplatesFormCustomizer
           'content-type': 'application/json;odata.metadata=none'
         },
         body: JSON.stringify(item)
-      });
+      })
   }
 
   private _updateItem(item: {[key: string]:string}, etag: string): Promise<SPHttpClientResponse> {
@@ -115,11 +115,11 @@ export default class FormTemplatesFormCustomizer
           'x-http-method': 'MERGE'
         },
         body: JSON.stringify(item)
-      });
+      })
   }
 
   private _onClose =  (): void => {
     // You MUST call this.formClosed() after you close the form.
-    this.formClosed();
+    this.formClosed()
   }
 }

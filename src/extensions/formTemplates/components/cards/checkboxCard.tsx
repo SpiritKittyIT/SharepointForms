@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library';
 import * as React from 'react';
+import { LocaleStrings } from '../formTemplates';
 
 interface ICheckboxCard {
   id: string
@@ -11,7 +12,7 @@ interface ICheckboxCard {
 }
 
 const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
     itemHandle.setValue(event.target.checked)
@@ -19,7 +20,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
     setErrorMessage(valueVerify(itemHandle.value))
@@ -33,12 +34,12 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
           <input
             id={id}
             className='card-checkbox-input'
-            type="checkbox"
+            type='checkbox'
             onChange={onChange}
             disabled={true}
             {...(itemHandle?.value  ? { checked: true } : {})}
           />
-          <div className="card-checkbox-checkmark-d" />
+          <div className='card-checkbox-checkmark-d' />
         </label>
       </div>
     )
@@ -49,11 +50,11 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
           <input
             id={id}
             className='card-checkbox-input'
-            type="checkbox"
+            type='checkbox'
             onChange={onChange}
             {...(itemHandle?.value  ? { checked: true } : {})}
           />
-          <div className="card-checkbox-checkmark" />
+          <div className='card-checkbox-checkmark' />
         </label>
         {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
       </div>
@@ -62,7 +63,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, required
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

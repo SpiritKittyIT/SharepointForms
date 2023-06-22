@@ -7,8 +7,8 @@ interface IError {
 
 const Error: React.FC<IError> = ({showHandle, message}) => {
   return showHandle.value ? (
-    <div id="myModal" className="modal" onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {showHandle.setValue(false)}}>
-      <div className="modal-content" onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {event.stopPropagation()}}>
+    <div id='myModal' className='modal' onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {showHandle.setValue(false)}}>
+      <div className='modal-content' onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {event.stopPropagation()}}>
         <p>{message}</p>
       </div>
     </div>

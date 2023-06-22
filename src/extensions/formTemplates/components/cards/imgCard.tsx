@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library';
 import * as React from 'react';
+import { LocaleStrings } from '../formTemplates';
 
 interface IImgCard {
   id: string
@@ -17,22 +18,22 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
         setActive(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
 }
 
 const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
   const wrapperRef = React.useRef(null)
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
   const [active, setActive] = React.useState<boolean>(false)
 
   useOutsideHider(wrapperRef, setActive)
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    const newVal = event.target.id.indexOf("URL") === 0
+    const newVal = event.target.id.indexOf('URL') === 0
                     ? {Description: itemHandle.value.Description, Url: event.target.value}
                     : {Description: event.target.value, Url: itemHandle.value.Url}
     itemHandle.setValue(newVal)
@@ -40,7 +41,7 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
 
   React.useEffect(() => {
     if (required && !(itemHandle.value?.Description && itemHandle.value?.Url)) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
     setErrorMessage(valueVerify(itemHandle.value))
@@ -62,7 +63,7 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
         <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
           {title}
         </label>
-        <div id={id} ref={wrapperRef} className="card-select-menu">
+        <div id={id} ref={wrapperRef} className='card-select-menu'>
           <div className='card-input card-tall-display' onClick={(event) => {setActive(!active)}}>
             <img className='card-tall-img' src={itemHandle?.value?.Url} alt={itemHandle?.value?.Description} />
           </div>
@@ -75,7 +76,7 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
               <input
                 className='card-url-input'
                 id={`Description-${id}`}
-                type="text"
+                type='text'
                 value={itemHandle?.value?.Description}
                 onChange={onChange}
               />
@@ -87,7 +88,7 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
               <input
                 className='card-url-input'
                 id={`URL-${id}`}
-                type="text"
+                type='text'
                 value={itemHandle?.value?.Url}
                 onChange={onChange}
               />
@@ -100,7 +101,7 @@ const ImgCard: React.FC<IImgCard> = ({id, title, displayMode, required, itemHand
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

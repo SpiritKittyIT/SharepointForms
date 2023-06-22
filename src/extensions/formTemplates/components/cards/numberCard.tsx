@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface INumberCard {
   id: string
@@ -13,26 +14,23 @@ interface INumberCard {
 }
 
 const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}, minValue, maxValue}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    setErrorMessage(valueVerify(+event.target.value)
-        + (minValue ? (+event.target.value > minValue ? `Value can not be lower than ${minValue}` : '') : '')
-        + (maxValue ? (+event.target.value < maxValue ? `Value can not be highrt than ${maxValue}` : '') : ''))
     itemHandle.setValue(+event.target.value)
   }
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
     if (minValue && itemHandle.value > minValue) {
-      setErrorMessage(`${title ? title : 'The value'} can not be lower than ${minValue}`)
+      setErrorMessage(`${title ? title : LocaleStrings.Cards.ThisValue}  ${LocaleStrings.Cards.CanNotLower} ${minValue}`)
       return
     }
     if (maxValue && itemHandle.value < maxValue) {
-      setErrorMessage(`${title ? title : 'The value'} can not be higher than ${minValue}`)
+      setErrorMessage(`${title ? title : LocaleStrings.Cards.ThisValue} ${LocaleStrings.Cards.CanNotHigher} ${minValue}`)
       return
     }
     setErrorMessage(valueVerify(itemHandle.value))
@@ -69,7 +67,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

@@ -1,5 +1,6 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
 
 interface ITextCard {
     id: string
@@ -11,7 +12,7 @@ interface ITextCard {
 }
 
 const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>("")
+  const [errorMessage, setErrorMessage] = React.useState<string>('')
 
   const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
     itemHandle.setValue(event.target.value)
@@ -19,7 +20,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
 
   React.useEffect(() => {
     if (required && !itemHandle.value) {
-      setErrorMessage(`${title ? title : 'This field'} can not be left empty`)
+      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
     setErrorMessage(valueVerify(itemHandle.value))
@@ -53,7 +54,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
   catch (error) {
     console.error(error)
     return (
-      <div className='card card-error'>Sorry, something went wrong with this form card. This card can not be rendered properly.</div>
+      <div className='card card-error'>{LocaleStrings.Cards.RenderError}</div>
     )
   }
 };

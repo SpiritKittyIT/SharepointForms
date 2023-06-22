@@ -4,13 +4,13 @@ import { FormDisplayMode } from '@microsoft/sp-core-library'
 import { FormCustomizerContext } from '@microsoft/sp-listview-extensibility'
 import { GraphFI } from '@pnp/graph'
 import { SPFI } from '@pnp/sp'
-import "@pnp/sp/site-users/web"
-import "@pnp/sp/site-groups/web"
-import "@pnp/sp/webs"
-import "@pnp/sp/lists"
-import "@pnp/sp/items"
-import "@pnp/sp/fields"
-// import { User, Group } from "@microsoft/microsoft-graph-types"
+import '@pnp/sp/site-users/web'
+import '@pnp/sp/site-groups/web'
+import '@pnp/sp/webs'
+import '@pnp/sp/lists'
+import '@pnp/sp/items'
+import '@pnp/sp/fields'
+// import { User, Group } from '@microsoft/microsoft-graph-types'
 
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
@@ -20,8 +20,11 @@ import './customFormStyles.css'
 
 import Error from './error'
 import TextCard from './cards/textCard'
+import { ILang, getLangStrings } from '../loc/langHelper'
 // import { ISiteUserInfo, ISiteUserProps, IWebEnsureUserResult } from '@pnp/sp/site-users/types'
 // import { ISiteGroupInfo } from '@pnp/sp/site-groups/types'
+
+export const LocaleStrings: ILang = getLangStrings('en')
 
 export interface IFormTemplatesProps {
   context: FormCustomizerContext;
@@ -34,12 +37,12 @@ export interface IFormTemplatesProps {
 
 const FormTemplate: FC<IFormTemplatesProps> = (props) => {
   //#region TEMPLATE_STATES
-    const [item, setItem] = React.useState<{[key: string]:any}>(props.displayMode === FormDisplayMode.New ? {} : props.context.item) // eslint-disable-line @typescript-eslint/no-explicit-any
+    const [item, setItem] = React.useState<Record<string, any>>(props.displayMode === FormDisplayMode.New ? {} : props.context.item) // eslint-disable-line @typescript-eslint/no-explicit-any
     const [cols, setCols] = React.useState<IColProps[]>([])
     const [show, setShow] = React.useState<boolean>(false)
     const [errorMessage, setErrorMessage] = React.useState<string>('')
   //#endregion
-
+  
   //#region TEMPLATE_FUNCTIONS
     // const contains: <A,V>(arr: A[], val: V, getVal?: (x: A) => V) => boolean
     //               = <A,V>(arr: A[], val: V, getVal = (x: A) => {return x as unknown as V}) => {
@@ -78,7 +81,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         return
       }
       let etag: string = ''
-      await props.sp.web.lists.getById(props.context.list.guid.toString()).items.getById(5)().then((val) => {
+      await props.sp.web.lists.getById(props.context.list.guid.toString()).items.getById(item.Id)().then((val) => {
         etag = val['odata.etag']
       }).catch((error) => {
         console.error(error)
@@ -196,8 +199,8 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <form>
         <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
             required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
-        {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>Save</button> : <></>}
-        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>Close</button>
+        {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</button> : <></>}
+        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.close}</button>
         <button type='button' className='button button-blue' onClick={async () => {
           console.log('Get all users')
         }}>Info</button>
