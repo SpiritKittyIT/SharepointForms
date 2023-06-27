@@ -2,7 +2,7 @@ import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
 import { LocaleStrings } from '../formTemplates'
 
-interface IDropDownMultiCard {
+interface ISelectMultiCard {
   id: string
   title: string
   displayMode: FormDisplayMode
@@ -28,7 +28,7 @@ function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: bool
   }, [ref]);
 }
 
-const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode, required, itemHandle, choices, selected,
+const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, required, itemHandle, choices, selected,
                                                           choiceFilter = (choice) => true, getDisplayText = (choice) => {return choice.Title}}) => {
   const wrapperRef = React.useRef(null)
   const [search, setSearch] = React.useState<string>('')
@@ -62,6 +62,7 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
       setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
+    setErrorMessage(``)
   }, [itemHandle.value, required])
   
   try {
@@ -145,4 +146,4 @@ const DropDownMultiCard: React.FC<IDropDownMultiCard> = ({id, title, displayMode
   }
 };
 
-export default DropDownMultiCard;
+export default SelectMultiCard;

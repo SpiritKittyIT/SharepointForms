@@ -47,6 +47,7 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
       setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
       return
     }
+    setErrorMessage(``)
   }, [itemHandle.value, required])
 
   try {
