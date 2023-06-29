@@ -2,117 +2,59 @@ import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
 import { LocaleStrings } from '../formTemplates'
 
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
 interface ISelectCard {
-    id: string
-    title: string
-    displayMode: FormDisplayMode
-    required: boolean
-    itemHandle: IHandle<string>
-    choices: IChoice[]
-    selected: IHandle<IChoice>
-    choiceFilter?: (choice: IChoice) => boolean
-    getDisplayText?:  (choice: IChoice) => string
+  id: string
+  title: string
+  displayMode: FormDisplayMode
+  required: boolean
+  itemHandle: IHandle<string>
+  choices: IChoice[]
+  selected: IChoice
 }
 
-function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: boolean) => void): void { // eslint-disable-line @typescript-eslint/no-explicit-any
-  React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent): void {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setActive(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref]);
-}
+const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, itemHandle, choices, selected}) => {
+  const [value, setValue] = React.useState<IChoice>(selected)
+  const [error, setError] = React.useState<boolean>(selected ? false : required)
+  const [errorMessage, setErrorMessage] = React.useState<string>()
 
-const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, itemHandle, choices, selected,
-                                            choiceFilter = (choice) => true, getDisplayText = (choice) => {return choice.Title}}) => {
-  const wrapperRef = React.useRef(null)
-  const [search, setSearch] = React.useState<string>('')
-  const [active, setActive] = React.useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = React.useState<string>('')
-
-  useOutsideHider(wrapperRef, setActive)
-  
-  const setSelected: (choice: IChoice) => void  = (choice) => {
-    selected.setValue(choice)
-    itemHandle.setValue(choice?.Id)
+  const onChange = (event: React.SyntheticEvent<Element, Event>, newValue: IChoice): void => {
+    setValue(newValue)
+    itemHandle.setValue(newValue ? newValue.value : null)
   }
 
   React.useEffect(() => {
-    if (required && !itemHandle.value) {
-      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
-      return
-    }
-    setErrorMessage(``)
+    const isErrorVal = itemHandle.value ? false : required
+    setError(isErrorVal)
+    setErrorMessage(isErrorVal ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}` : null)
   }, [itemHandle.value, required])
 
   try {
-    return displayMode === FormDisplayMode.Display ? (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className='card-select-menu'>
-          <div className={`card-dropdown-input-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            { selected.value
-              ? <div className='card-selected'>
-                  <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
-                </div>
-              : ``}
-          </div>
-          <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected-d ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-              { selected.value
-                ? <div className='card-selected'>
-                    <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
-                  </div>
-                : ``}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-    : (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>{title}</label>
-        <div id={id} ref={wrapperRef} className='card-select-menu'>
-          <div className={`card-dropdown-input ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-            {selected.value
-              ? <div className='card-selected'>
-                  <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
-                </div>
-                : `${LocaleStrings.Cards.Select} ${title}...`}
-          </div>
-          <div className={`card-select-dropdown ${active ? 'active' : ''}`}>
-            <div className={`card-filter-selected ${selected.value ? '' : 'placeholder'}`} onClick={(event) => {setActive(!active)}}>
-              {selected.value
-                ? <div className='card-selected'>
-                    <div className='card-selected-value'>{getDisplayText(selected.value)}</div>
-                    <div  className='card-selected-unselect' onClick={(event) => {event.stopPropagation(); setSelected(null); setActive(false)}}>X</div>
-                  </div>
-                : `${LocaleStrings.Cards.Select} ${title}...`}
-            </div>
-            <div className='card-select-filter'>
-              <input type='text' className='card-select-input' placeholder={LocaleStrings.Cards.Placeholder} value={search} onChange={(event) => {setSearch(event.target.value)}} />
-            </div>
-            <div className='card-select-options'>
-              { choices?.filter((choice) => {
-                  return choiceFilter(choice) && getDisplayText(choice).toLowerCase().indexOf(search.toLowerCase()) >= 0
-                })
-                .map((choice: IChoice) => {return(
-                  <div className='option' key={`${id}-${choice.Id}`} onClick={(event) => {document.getElementById(`${id}-${choice.Id}`)?.click()}}>
-                    <input type='radio' className='radio' id={`${id}-${choice.Id}`} value={choice.Id} name={id} checked={choice.Id === selected.value?.Id} onChange={(event) => {setSelected(choice); setActive(false)}} />
-                    <label className='option-label' htmlFor={`${id}-${choice.Id}`}>{getDisplayText(choice)}</label>
-                  </div>
-                )})
-              }
-            </div>
-          </div>
-        </div>
-        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
-      </div>
+    return (
+      <Autocomplete
+          disablePortal
+          id={id}
+          disabled={displayMode === FormDisplayMode.Display}
+          options={choices}
+          fullWidth
+          value={value}
+          onChange={onChange}
+          isOptionEqualToValue={(option, value) => {
+            return option?.value === value?.value
+          }}
+          renderInput={(params) => 
+            <TextField
+              {...params}
+              label={title}
+              variant='standard'
+              required={required}
+              error={error}
+              helperText={errorMessage}
+            />
+          }
+        />
     )
   }
   catch (error) {

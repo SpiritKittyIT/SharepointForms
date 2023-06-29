@@ -57,7 +57,6 @@ declare interface FormGroup {
 }
 
 interface IChoice {
-  Id: string,
-  Title: string,
-  [Key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  value: string,
+  label: string,
 }

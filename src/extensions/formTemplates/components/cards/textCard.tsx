@@ -1,54 +1,58 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
 import { LocaleStrings } from '../formTemplates'
+import { TextField } from '@mui/material'
 
 interface ITextCard {
-    id: string
-    title: string
-    displayMode: FormDisplayMode
-    required: boolean
-    itemHandle: IHandle<string>
-    valueVerify?: (value: string) => string
+  id: string
+  title: string
+  displayMode: FormDisplayMode
+  required: boolean
+  itemHandle: IHandle<string>
+  valueVerify?: (value: string) => string
+  multiLine?: boolean
 }
 
-const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
-  const [errorMessage, setErrorMessage] = React.useState<string>('')
+const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value): string => {return null}}, multiLine = false) => {
+  const [error, setError] = React.useState<boolean>(itemHandle.value ? false : required)
+  const [errorMessage, setErrorMessage] = React.useState<string>()
 
-  const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     itemHandle.setValue(event.target.value)
   }
 
   React.useEffect(() => {
-    if (required && !itemHandle.value) {
-      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
-      return
-    }
-    setErrorMessage(valueVerify(itemHandle.value))
+    const verifyResult = valueVerify(itemHandle.value)
+    const isErrorVal = itemHandle.value ? false : required || verifyResult ? true : false
+    setError(isErrorVal)
+    setErrorMessage(isErrorVal ? (
+      !itemHandle.value && required
+      ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`
+      : verifyResult) : null)
+    console.log({...multiLine ? {
+      multiline: true,
+      rows: 4
+    }: {}})
   }, [itemHandle.value, required])
 
   try {
-    return displayMode === FormDisplayMode.Display ? (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title}
-        </label>
-        <div id={id} className='card-input-d'>{itemHandle.value}</div>
-      </div>
-    )
-    : (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title}
-        </label>
-        <input
-          className='card-input'
-          id={id}
-          type='text'
-          value={itemHandle.value}
-          onChange={onChange}
-        />
-        {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
-      </div>
+    return (
+      <TextField
+        id={id}
+        disabled={displayMode === FormDisplayMode.Display}
+        fullWidth
+        {...multiLine ? {
+          multiline: true,
+          rows: 4
+        }: {}}
+        label={title}
+        variant='standard'
+        required={required}
+        value={itemHandle.value}
+        onChange={onChange}
+        error={error}
+        helperText={errorMessage}
+      />
     )
   }
   catch (error) {

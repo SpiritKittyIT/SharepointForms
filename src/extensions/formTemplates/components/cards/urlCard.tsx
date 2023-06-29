@@ -1,6 +1,7 @@
-import { FormDisplayMode } from '@microsoft/sp-core-library';
-import * as React from 'react';
-import { LocaleStrings } from '../formTemplates';
+import { FormDisplayMode } from '@microsoft/sp-core-library'
+import * as React from 'react'
+import { LocaleStrings } from '../formTemplates'
+import { TextField } from '@mui/material'
 
 interface IUrlCard {
   id: string
@@ -8,95 +9,60 @@ interface IUrlCard {
   displayMode: FormDisplayMode
   required: boolean
   itemHandle: IHandle<{Description: string, Url: string}>
-  valueVerify?: (value: {Description: string, Url: string}) => string
 }
 
-function useOutsideHider(ref: React.MutableRefObject<any>, setActive: (val: boolean) => void): void { // eslint-disable-line @typescript-eslint/no-explicit-any
-  React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent): void {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setActive(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref]);
-}
+const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHandle}) => {
+  const [error, setError] = React.useState<boolean>(itemHandle.value ? false : required)
+  const [errorMessage, setErrorMessage] = React.useState<string>()
 
-const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value) => {return ''}}) => {
-  const wrapperRef = React.useRef(null)
-  const [errorMessage, setErrorMessage] = React.useState<string>('')
-  const [active, setActive] = React.useState<boolean>(false)
-
-  useOutsideHider(wrapperRef, setActive)
-
-  const onChange: (event: React.ChangeEvent<HTMLInputElement>) => void  = (event) => {
-    const newVal = event.target.id.indexOf('URL') === 0
-                    ? {Description: itemHandle.value.Description, Url: event.target.value}
-                    : {Description: event.target.value, Url: itemHandle.value.Url}
-    itemHandle.setValue(newVal)
+  const [errorUrl, setErrorUrl] = React.useState<boolean>(itemHandle.value ? false : required)
+  const [errorUrlMessage, setErrorUrlMessage] = React.useState<string>()
+  
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    itemHandle.setValue({Description: event.target.value, Url: itemHandle.value.Url})
+  }
+  
+  const onChangeUrl = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    itemHandle.setValue({Description: itemHandle.value.Description, Url: event.target.value})
   }
 
   React.useEffect(() => {
-    if (required && !(itemHandle.value?.Description && itemHandle.value?.Url)) {
-      setErrorMessage(`${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`)
-      return
-    }
-    setErrorMessage(valueVerify(itemHandle.value))
+    const isErrorVal = itemHandle.value.Description ? false : required
+    setError(isErrorVal)
+    setErrorMessage(isErrorVal ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}` : null)
+
+    const isUrlErrorVal = itemHandle.value.Url ? false : required
+    setErrorUrl(isUrlErrorVal)
+    setErrorUrlMessage(isUrlErrorVal ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField} Url` : null)
   }, [itemHandle.value, required])
 
   try {
-    return displayMode === FormDisplayMode.Display ? (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title}
-        </label>
-        <div id={id} className='card-input-d'>
-          <a href={itemHandle?.value?.Url}>{itemHandle?.value?.Description}</a>
-        </div>
-      </div>
-    )
-    : (
-      <div className='card'>
-        <label htmlFor={id} className={`card-label ${required ? 'card-required' : ''}`}>
-          {title}
-        </label>
-        <div id={id} ref={wrapperRef} className='card-select-menu'>
-          <div className='card-input' onClick={(event) => {setActive(!active)}}>
-            <a href={itemHandle?.value?.Url} onClick={(event) => {event.stopPropagation()}} >{itemHandle?.value?.Description}</a>
-          </div>
-          {errorMessage && errorMessage !== '' ? <div className='card-error'>{errorMessage}</div> : <></>}
-          <div className={`card-select-dropdown ${active ? 'active' : ''}`} onClick={(event) => {setActive(!active)}}>
-            <div className={`card-url-input-wrapper`} >
-              <label htmlFor={`Description-${id}`} className={`card-label ${required ? 'card-required' : ''}`}>
-                Description:
-              </label>
-              <input
-                className='card-url-input'
-                id={`Description-${id}`}
-                type='text'
-                value={itemHandle?.value?.Description}
-                onChange={onChange}
-                onClick={(event) => {event.stopPropagation()}}
-              />
-            </div>
-            <div className={`card-url-input-wrapper`} >
-              <label htmlFor={`URL-${id}`} className={`card-label ${required ? 'card-required' : ''}`}>
-                URL:
-              </label>
-              <input
-                className='card-url-input'
-                id={`URL-${id}`}
-                type='text'
-                value={itemHandle?.value?.Url}
-                onChange={onChange}
-                onClick={(event) => {event.stopPropagation()}}
-              />
-            </div>
-          </div>
-        </div>
+    return (
+      <div>
+        <TextField
+          id={`${id}-describtion`}
+          disabled={displayMode === FormDisplayMode.Display}
+          sx={{ width: '49.5%' }}
+          label={title}
+          variant='standard'
+          required={required}
+          value={itemHandle.value.Description}
+          onChange={onChange}
+          error={error}
+          helperText={errorMessage}
+        />
+        <TextField
+          id={`${id}-url`}
+          disabled={displayMode === FormDisplayMode.Display}
+          sx={{ width: '49.5%', float: 'right' }}
+          label={`${title} Url`}
+          variant='standard'
+          required={required}
+          value={itemHandle.value.Url}
+          onChange={onChangeUrl}
+          error={errorUrl}
+          helperText={errorUrlMessage}
+        />
       </div>
     )
   }

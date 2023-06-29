@@ -83,7 +83,7 @@ export async function GetAllChoiceUsers(sp: SPFI): Promise<IChoice[]> {
       const claim = user.LoginName.split('|')
       return claim.length > 2 && claim[1] === 'membership'
     }).map((member) => {
-      return {...member, Id: `${member.Id}`, Title: member.Title}
+      return {value: `${member.Id}`, label: member.Title}
     })
   })
 }
@@ -94,7 +94,7 @@ export async function GetGroupChoiceUsers(groupId: number, sp: SPFI): Promise<IC
       const claim = user.LoginName.split('|')
       return claim.length > 2 && claim[1] === 'membership'
     }).map((member) => {
-      return {...member, Id: `${member.Id}`, Title: member.Title}
+      return {value: `${member.Id}`, label: member.Title}
     })
   })
 }

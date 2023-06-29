@@ -50,7 +50,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
         setShow(true)
         return
       }
-      const cardErrors = document.getElementsByClassName('card-error')
+      const cardErrors = document.getElementsByClassName('Mui-error')
       if (cardErrors.length > 0) { valid = false }
       for (let i = 0; i < cardErrors.length; i++) {
         newErrorMessage = `${newErrorMessage}\n${cardErrors[i].textContent}`
@@ -108,8 +108,11 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   //#region FORM_CODE
     const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
+    const [TestProps, TestPropsSet] = React.useState<IColProps>()
+    const TestName = 'acColMultiPlain'
     React.useEffect(() => {
       TitlePropsSet(GetColProps('Title', cols))
+      TestPropsSet(GetColProps(TestName, cols))
     }, [cols])
 
     const StringValSet = (value: string, valueName: string): void => {
@@ -119,7 +122,15 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
     }
 
+    const TestValSet = (value: any, valueName: string): void => {
+      setItem({
+        ...item,
+        [valueName]: value,
+      })
+    }
+
     const TitleHandle = {value: item['Title'], setValue: (value: string) => StringValSet(value,'Title')}
+    const TestHandle = {value: item[TestName], setValue: (value: any) => TestValSet(value,TestName)}
   //#endregion
 
   return (
@@ -128,10 +139,12 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       <form>
         <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
             required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
+        <TextCard id={TestName} title={TestProps ? TestProps.Title : ''} displayMode={props.displayMode}
+            required={true} itemHandle={TestHandle} multiLine />
         {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</button> : <></>}
         <button type='button' className='button button-red' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.Close}</button>
         <button type='button' className='button button-blue' onClick={async () => {
-          console.log('Get all users')
+          console.log(item)
         }}>Info</button>
       </form>
     </>
