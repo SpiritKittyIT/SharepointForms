@@ -1,16 +1,16 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
 import { LocaleStrings } from '../formTemplates'
-import { Checkbox, FormControlLabel } from '@mui/material'
+import { FormControlLabel, Switch } from '@mui/material'
 
-interface ICheckboxCard {
+interface ISwitchCard {
   id: string
   title: string
   displayMode: FormDisplayMode
   itemHandle: IHandle<boolean>
 }
 
-const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, itemHandle}) => {
+const SwitchCard: React.FC<ISwitchCard> = ({id, title, displayMode, itemHandle}) => {
   const onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void  = (event, checked) => {
     itemHandle.setValue(checked)
   }
@@ -20,7 +20,7 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, itemHand
       <FormControlLabel
         label={title}
         control={
-          <Checkbox
+          <Switch
             id={id}
             disabled={displayMode === FormDisplayMode.Display}
             checked={itemHandle.value === undefined ? null : itemHandle.value}
@@ -38,4 +38,4 @@ const CheckboxCard: React.FC<ICheckboxCard> = ({id, title, displayMode, itemHand
   }
 };
 
-export default CheckboxCard;
+export default SwitchCard;

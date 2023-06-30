@@ -36,7 +36,8 @@ const TextMultiLineCard: React.FC<ITextMultiLineCard> = ({id, title, displayMode
         id={id}
         disabled={displayMode === FormDisplayMode.Display}
         fullWidth
-        
+        multiline
+        rows={4}
         label={title}
         variant='standard'
         required={required}

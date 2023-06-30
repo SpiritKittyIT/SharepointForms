@@ -2,7 +2,8 @@
   "Buttons": {
     "Save": "OK",
     "Edit": "Upraviť",
-    "Close": "Zrušiť"
+    "Close": "Zrušiť",
+    "DialogClose": "Zatvoriť"
   },
   "Cards": {
     "RenderError": "Prepáčte, niečo sa pokazilo s touto kartou formuláru. Táto karta sa nedá zobraziť správne.",
@@ -14,8 +15,11 @@
     "CanNotLower": "nemôže byť menšia než",
     "CanNotHigher": "nemôže byť väčšia než"
   },
-  "Display": {
-    "RenderError": "Prepáčte, niečo sa pokazilo s týmto zobrazením dát. Toto zobrazenie dát sa nedá správne načítať."
+  "Form": {
+    "DialogTitleError": "Vyskytly sa chyby počas odosielania formuláru:",
+    "DisplaySubmitError": "Nemôžete odoslať formulár v móde zobrazenia.",
+    "FormSubmitError": "Formulár nie je vyplnený správne.",
+    "ETagValueError": "Nesprávna hodnota ETag počas odosielania formuláru. Prosím Znova načítajte stránku a skúste znova."
   },
   "Helper": {
     "UserNotFound": "Nepodarilo sa nájsť zadaného používateľa"

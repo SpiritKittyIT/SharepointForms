@@ -10,10 +10,9 @@ interface ITextCard {
   required: boolean
   itemHandle: IHandle<string>
   valueVerify?: (value: string) => string
-  multiLine?: boolean
 }
 
-const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value): string => {return null}}, multiLine = false) => {
+const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHandle, valueVerify = (value): string => {return null}}) => {
   const [error, setError] = React.useState<boolean>(itemHandle.value ? false : required)
   const [errorMessage, setErrorMessage] = React.useState<string>()
 
@@ -29,10 +28,6 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
       !itemHandle.value && required
       ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}`
       : verifyResult) : null)
-    console.log({...multiLine ? {
-      multiline: true,
-      rows: 4
-    }: {}})
   }, [itemHandle.value, required])
 
   try {
@@ -41,10 +36,6 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
         id={id}
         disabled={displayMode === FormDisplayMode.Display}
         fullWidth
-        {...multiLine ? {
-          multiline: true,
-          rows: 4
-        }: {}}
         label={title}
         variant='standard'
         required={required}

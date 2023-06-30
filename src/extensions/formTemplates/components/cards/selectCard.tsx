@@ -1,9 +1,7 @@
 import { FormDisplayMode } from '@microsoft/sp-core-library'
 import * as React from 'react'
 import { LocaleStrings } from '../formTemplates'
-
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import { Autocomplete, TextField } from '@mui/material'
 
 interface ISelectCard {
   id: string

@@ -11,16 +11,15 @@ import '@pnp/sp/lists'
 import '@pnp/sp/items'
 import '@pnp/sp/fields'
 
+import { ILang, getLangStrings } from '../loc/langHelper'
+import { GetColProps } from '../help/helperFunctions'
+import { Button, Stack, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import { TextCard } from './cards'
+//import { localeCurrencies } from '../help/dictionaries'
+
 import './formTemplates.module.css'
 import './cards/cardStyles.css'
 import './dataDisplays/dataDisplayStyles.css'
-import './customFormStyles.css'
-//import { localeCurrencies } from '../help/dictionaries'
-
-import Error from './error'
-import TextCard from './cards/textCard'
-import { ILang, getLangStrings } from '../loc/langHelper'
-import { GetColProps } from '../help/helperFunctions'
 
 export const LocaleStrings: ILang = getLangStrings('en')
 
@@ -39,24 +38,18 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     const [cols, setCols] = React.useState<IColProps[]>([])
     const [show, setShow] = React.useState<boolean>(false)
     const [errorMessage, setErrorMessage] = React.useState<string>('')
+    const [sourcePage, setSourcePage] = React.useState<string>('')
   //#endregion
   
   //#region TEMPLATE_FUNCTIONS
     const handleSubmit: (event: React.FormEvent<HTMLButtonElement>) => void = async (event) => {
-      let valid = true
-      let newErrorMessage = 'There were errors during form submission:'
       if (props.displayMode === FormDisplayMode.Display){
-        setErrorMessage(`${newErrorMessage}\nYou can not submit form in Display mode`)
+        setErrorMessage(LocaleStrings.Form.DisplaySubmitError)
         setShow(true)
         return
       }
-      const cardErrors = document.getElementsByClassName('Mui-error')
-      if (cardErrors.length > 0) { valid = false }
-      for (let i = 0; i < cardErrors.length; i++) {
-        newErrorMessage = `${newErrorMessage}\n${cardErrors[i].textContent}`
-      }
-      if (!valid){
-        setErrorMessage(newErrorMessage)
+      if (document.getElementsByClassName('Mui-error').length > 0){
+        setErrorMessage(LocaleStrings.Form.FormSubmitError)
         setShow(true)
         return
       }
@@ -69,10 +62,10 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
       await props.onSave(item, etag).catch((error: Error) => {
         if (error.message.indexOf('The request ETag value') !== -1){
-          setErrorMessage(`${newErrorMessage}\nETag value mismatch during form submission. Prease reload the site and re-submit.`)
+          setErrorMessage(LocaleStrings.Form.ETagValueError)
         }
         else {
-          setErrorMessage(`${newErrorMessage}\n${error.message}`)
+          setErrorMessage(error.message)
         }
         setShow(true)
       })
@@ -81,6 +74,9 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
 
   //#region ON_LOAD
     React.useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.href)
+      setSourcePage(urlParams?.get('Source'))
+
       const removeFields = ['@odata.context', '@odata.editLink', '@odata.metadata', '@odata.etag', '@odata.id', '@odata.type',
         'OData__ColorTag', 'OData__dlc_DocId', 'OData__dlc_DocIdUrl', 'OData__CopySource', 'OData__UIVersionString',
         'MediaServiceImageTags', 'MediaServiceOCR']
@@ -104,15 +100,10 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
     }, [props])
   //#endregion
 
-  // Enter your code here
-
   //#region FORM_CODE
     const [TitleProps, TitlePropsSet] = React.useState<IColProps>()
-    const [TestProps, TestPropsSet] = React.useState<IColProps>()
-    const TestName = 'acColMultiPlain'
     React.useEffect(() => {
       TitlePropsSet(GetColProps('Title', cols))
-      TestPropsSet(GetColProps(TestName, cols))
     }, [cols])
 
     const StringValSet = (value: string, valueName: string): void => {
@@ -122,30 +113,45 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
       })
     }
 
-    const TestValSet = (value: any, valueName: string): void => {
-      setItem({
-        ...item,
-        [valueName]: value,
-      })
-    }
-
     const TitleHandle = {value: item['Title'], setValue: (value: string) => StringValSet(value,'Title')}
-    const TestHandle = {value: item[TestName], setValue: (value: any) => TestValSet(value,TestName)}
   //#endregion
 
   return (
     <>
-      <Error showHandle={{value: show, setValue: setShow}} message={errorMessage} />
+      <Dialog
+        open={show}
+        onClose={() => {setShow(false)}}
+      >
+        <DialogTitle>
+          {LocaleStrings.Form.DialogTitleError}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>{errorMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {setShow(false)}}>{LocaleStrings.Buttons.DialogClose}</Button>
+        </DialogActions>
+      </Dialog>
       <form>
-        <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
-            required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
-        <TextCard id={TestName} title={TestProps ? TestProps.Title : ''} displayMode={props.displayMode}
-            required={true} itemHandle={TestHandle} multiLine />
-        {props.displayMode !== FormDisplayMode.Display ? <button type='button' className='button button-green' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</button> : <></>}
-        <button type='button' className='button button-red' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.Close}</button>
-        <button type='button' className='button button-blue' onClick={async () => {
-          console.log(item)
-        }}>Info</button>
+        <Stack direction='column' spacing={2} sx={{maxWidth: '30rem', margin: '1rem'}}>
+          <Stack direction='column' spacing={2}>
+            <TextCard id='Title' title={TitleProps ? TitleProps.Title : ''} displayMode={props.displayMode}
+                required={TitleProps ? TitleProps.Required : false} itemHandle={TitleHandle}/>
+          </Stack>
+          <Stack direction='row' spacing={2}>
+            {props.displayMode === FormDisplayMode.Display
+                ? <Button variant='contained' size='small' color='warning'
+                  href={`${props.context.pageContext.web.absoluteUrl}/_layouts/15/SPListForm.aspx?PageType=6&List=${props.context.list.guid}&ID=${props.context.itemId}&Source=${sourcePage}`}
+                  >
+                    {LocaleStrings.Buttons.Edit}
+                  </Button>
+                : <Button variant='contained' size='small' color='success' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</Button>}
+            <Button variant='contained' size='small' color='error'>{LocaleStrings.Buttons.Close}</Button>
+            <Button variant='outlined' size='small' color='info' onClick={async () => {
+              console.log(item)
+            }}>Info</Button>
+          </Stack>
+        </Stack>
       </form>
     </>
   )

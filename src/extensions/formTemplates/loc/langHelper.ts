@@ -3,6 +3,7 @@ export interface ILang{
     Save: string
     Edit: string
     Close: string
+    DialogClose: string
   }
   Cards: {
     RenderError: string
@@ -14,8 +15,11 @@ export interface ILang{
     CanNotLower: string
     CanNotHigher: string
   }
-  Display: {
-    RenderError: string
+  Form: {
+    DialogTitleError: string
+    DisplaySubmitError: string
+    FormSubmitError: string
+    ETagValueError: string
   }
   Helper: {
     UserNotFound: string
