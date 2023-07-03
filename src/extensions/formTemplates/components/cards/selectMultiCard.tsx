@@ -55,7 +55,6 @@ const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, re
               required={required}
               error={error}
               helperText={errorMessage}
-              InputLabelProps={{ shrink: itemHandle.value ? true : false }}
             />
           }
         />
