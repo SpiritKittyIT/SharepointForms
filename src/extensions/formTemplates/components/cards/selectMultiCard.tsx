@@ -14,7 +14,7 @@ interface ISelectMultiCard {
 }
 
 const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, required, itemHandle, choices, selected}) => {
-  const [value, setValue] = React.useState<IChoice[]>(selected)
+  const [value, setValue] = React.useState<IChoice[]>(null)
   const [error, setError] = React.useState<boolean>(selected ? false : required)
   const [errorMessage, setErrorMessage] = React.useState<string>()
 
@@ -28,6 +28,10 @@ const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, re
     setError(isErrorVal)
     setErrorMessage(isErrorVal ? `${LocaleStrings.Cards.PleaseFill} ${title ? title : LocaleStrings.Cards.ThisField}` : null)
   }, [itemHandle.value, required])
+
+  React.useEffect(() => {
+    onChange(null, selected)
+  }, [selected])
   
   try {
     return (
@@ -51,6 +55,7 @@ const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, re
               required={required}
               error={error}
               helperText={errorMessage}
+              InputLabelProps={{ shrink: itemHandle.value ? true : false }}
             />
           }
         />

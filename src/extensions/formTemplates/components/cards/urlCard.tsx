@@ -50,6 +50,7 @@ const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHand
           onChange={onChange}
           error={error}
           helperText={errorMessage}
+          InputLabelProps={{ shrink: itemHandle.value ? true : false }}
         />
         <TextField
           id={`${id}-url`}
@@ -62,6 +63,7 @@ const UrlCard: React.FC<IUrlCard> = ({id, title, displayMode, required, itemHand
           onChange={onChangeUrl}
           error={errorUrl}
           helperText={errorUrlMessage}
+          InputLabelProps={{ shrink: itemHandle.value ? true : false }}
         />
       </div>
     )

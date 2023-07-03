@@ -45,6 +45,7 @@ const TextMultiLineCard: React.FC<ITextMultiLineCard> = ({id, title, displayMode
         onChange={onChange}
         error={error}
         helperText={errorMessage}
+        InputLabelProps={{ shrink: itemHandle.value ? true : false }}
       />
     )
   }

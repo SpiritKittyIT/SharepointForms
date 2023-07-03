@@ -43,6 +43,7 @@ const TextCard: React.FC<ITextCard> = ({id, title, displayMode, required, itemHa
         onChange={onChange}
         error={error}
         helperText={errorMessage}
+        InputLabelProps={{ shrink: itemHandle.value ? true : false }}
       />
     )
   }

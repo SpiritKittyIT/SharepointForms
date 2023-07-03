@@ -146,7 +146,7 @@ const FormTemplate: FC<IFormTemplatesProps> = (props) => {
                     {LocaleStrings.Buttons.Edit}
                   </Button>
                 : <Button variant='contained' size='small' color='success' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</Button>}
-            <Button variant='contained' size='small' color='error'>{LocaleStrings.Buttons.Close}</Button>
+            <Button variant='contained' size='small' color='error' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.Close}</Button>
             <Button variant='outlined' size='small' color='info' onClick={async () => {
               console.log(item)
             }}>Info</Button>
