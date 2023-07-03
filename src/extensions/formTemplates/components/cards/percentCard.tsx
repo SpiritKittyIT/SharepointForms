@@ -61,7 +61,7 @@ const PercentCard: React.FC<IPercentCard> = ({id, title, displayMode, required, 
         onChange={onChange}
         error={error}
         helperText={errorMessage}
-        InputLabelProps={{ shrink: itemHandle.value ? true : false }}
+        InputLabelProps={{ shrink: itemHandle.value || itemHandle.value === 0 ? true : false }}
       />
     )
   }

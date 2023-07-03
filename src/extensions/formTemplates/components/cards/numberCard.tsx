@@ -62,7 +62,7 @@ const NumberCard: React.FC<INumberCard> = ({id, title, displayMode, required, it
         onChange={onChange}
         error={error}
         helperText={errorMessage}
-        InputLabelProps={{ shrink: itemHandle.value ? true : false }}
+        InputLabelProps={{ shrink: itemHandle.value || itemHandle.value === 0 ? true : false }}
       />
     )
   }
