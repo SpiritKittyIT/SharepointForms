@@ -77,6 +77,34 @@ export async function CheckGroupMembership(groupId: number, sp: SPFI): Promise<b
   return result
 }
 
+export async function GetAllChoiceMembers(sp: SPFI): Promise<IChoice[]> {
+  let Users: IChoice[] = []
+  let Groups: IChoice[] = []
+  const userClaims = ['membership', 'rolemanager', 'true', 'tenant']
+  await sp.web.siteUsers.select('*')().then((users) => {
+    Users = users.filter((user) => {
+      const claim = user.LoginName.split('|')
+      return claim.length >= 2 && Contains(userClaims, claim[1])
+    }).map((member) => {
+      return {value: `${member.Id}`, label: member.Title}
+    })
+  }).catch((error) => {
+    console.error(error)
+  })
+  
+  await sp.web.siteGroups.select('*')().then((groups) => {
+    Groups = groups.filter((group) => {
+      return group.OwnerTitle !== 'Systémové konto'
+    }).map((member) => {
+      return {value: `${member.Id}`, label: member.Title}
+    })
+  }).catch((error) => {
+    console.error(error)
+  })
+
+  return Users.concat(Groups)
+}
+
 export async function GetAllChoiceUsers(sp: SPFI): Promise<IChoice[]> {
   return sp.web.siteUsers.select('*')().then((users) => {
     return users.filter((user) => {
