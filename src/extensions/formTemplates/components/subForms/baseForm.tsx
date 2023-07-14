@@ -14,6 +14,7 @@ import { GetColProps } from '../../help/helperFunctions'
 import { Button, Stack, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { TextCard } from '../cards'
 import { FormSubmit, IFormTemplatesProps, LocaleStrings } from '../formTemplates'
+import DevInfoButon from '../../help/devInfoButton'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -107,9 +108,9 @@ const BaseForm: FC<IFormTemplatesProps> = (props) => {
                   </Button>
                 : <Button variant='contained' size='small' color='success' onClick={handleSubmit}>{LocaleStrings.Buttons.Save}</Button>}
             <Button variant='contained' size='small' color='error' onClick={() => {props.onClose()}}>{LocaleStrings.Buttons.Close}</Button>
-            <Button variant='outlined' size='small' color='info' onClick={async () => {
+            <DevInfoButon sp={props.sp} devListByEmail={[]} onClick={async () => {
               console.log(item)
-            }}>Info</Button>
+            }}/>
           </Stack>
         </Stack>
       </form>
