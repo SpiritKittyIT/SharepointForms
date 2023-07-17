@@ -19,6 +19,7 @@ const SelectMultiCard: React.FC<ISelectMultiCard> = ({id, title, displayMode, re
   const [errorMessage, setErrorMessage] = React.useState<string>()
 
   const onChange = (event: React.SyntheticEvent<Element, Event>, newValue: IChoice[]): void => {
+    if (!event && newValue.length <= 0) {return}
     setValue(newValue)
     itemHandle.setValue(newValue ? newValue.map((v) => v.value) : null)
   }

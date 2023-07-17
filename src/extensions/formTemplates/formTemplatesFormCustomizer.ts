@@ -14,14 +14,12 @@ import '@pnp/graph/groups'
 import '@pnp/graph/members'
 import { FormDisplayMode, Log } from '@microsoft/sp-core-library'
 import {
-  SPHttpClient,
-  SPHttpClientResponse
-} from '@microsoft/sp-http'
-import {
   BaseFormCustomizer
 } from '@microsoft/sp-listview-extensibility'
 
 import FormTemplates, { IFormTemplatesProps } from './components/formTemplates'
+import { IItemUpdateResult } from '@pnp/sp/items'
+import { ValidateUpdateMemberMultiField } from './help/helperFunctions'
 
 /**
  * If your form customizer uses the ClientSideComponentProperties JSON input,
@@ -68,54 +66,53 @@ export default class FormTemplatesFormCustomizer
     super.onDispose()
   }
 
-  private _onSave = async (item: {}, etag: string): Promise<void> => {
+  private _onSave = async (item: Record<string, any>, etag: string): Promise<void> => {
     // disable all input elements while we're saving the item
     this.domElement.querySelectorAll('input').forEach(el => el.setAttribute('disabled', 'disabled'))
-  
-    let request: Promise<SPHttpClientResponse> = new Promise<SPHttpClientResponse>(() => {return})
-  
+
+    // person or group multi select fields need to be validated
+    const fieldsToValidate: {fieldName: string, fieldValue: number[]}[] = []
+
     switch (this.displayMode) {
       case FormDisplayMode.New:
-        request = this._createItem(item)
+        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.add(item)
+          .then((result: IItemUpdateResult) => {return},
+          (reason: any) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw new Error('Form submit error.')
+        }).catch((err) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw err
+        })
         break
       case FormDisplayMode.Edit:
-        request = this._updateItem(item, etag)
-    }
-  
-    const res: SPHttpClientResponse = await request
-  
-    if (res.ok) {
-      // You MUST call this.formSaved() after you save the form.
-      this.formSaved()
-    }
-    else {
-      const error: { error: { message: string } } = await res.json()
-      
-      this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
-      throw new Error(error.error.message)
-    }
-  }
+        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(item, etag)
+        .then((result: IItemUpdateResult) => {return},
+          (reason: any) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw new Error('Form submit error.')
+        }).catch((err) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw err
+        })
 
-  private _createItem(item: {[key: string]:string}): Promise<SPHttpClientResponse> {
-    return this.context.spHttpClient
-      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetById('${this.context.list.guid}')/items`, SPHttpClient.configurations.v1, {
-        headers: {
-          'content-type': 'application/json;odata.metadata=none'
-        },
-        body: JSON.stringify(item)
-      })
-  }
-
-  private _updateItem(item: {[key: string]:string}, etag: string): Promise<SPHttpClientResponse> {
-    return this.context.spHttpClient
-      .post(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetById('${this.context.list.guid}')/items(${this.context.itemId})`, SPHttpClient.configurations.v1, {
-        headers: {
-          'content-type': 'application/json;odata.metadata=none',
-          'if-match': etag,
-          'x-http-method': 'MERGE'
-        },
-        body: JSON.stringify(item)
-      })
+        if (fieldsToValidate.length > 0) {
+          ValidateUpdateMemberMultiField(fieldsToValidate, this._sp)
+          .then((validateFields) => {
+            this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId)
+            .validateUpdateListItem(validateFields)
+            .then((val) => {return})
+            .catch((err) => {
+              throw err
+            })
+          }).catch((err) => {
+            throw err
+          })
+        }
+        break
+    }
+    // You MUST call this.formSaved() after you save the form.
+    this.formSaved()
   }
 
   private _onClose =  (): void => {

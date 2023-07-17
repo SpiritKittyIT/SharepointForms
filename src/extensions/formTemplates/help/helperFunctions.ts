@@ -11,6 +11,7 @@ import '@pnp/sp/webs'
 import '@pnp/sp/lists'
 import '@pnp/sp/items'
 import '@pnp/sp/fields'
+import { IListItemFormUpdateValue } from "@pnp/sp/lists"
 
 export function Contains<A,V>(arr: A[], val: V, getVal: (x: A) => V = (x: A) => {return x as unknown as V}): boolean {
   for (const arrItem of arr){
@@ -125,4 +126,50 @@ export async function GetGroupChoiceUsers(groupId: number, sp: SPFI): Promise<IC
       return {value: `${member.Id}`, label: member.Title}
     })
   })
+}
+
+export async function ValidateUpdateMemberMultiField(memberMultiFields: {fieldName: string, fieldValue: number[]}[], sp: SPFI): Promise<IListItemFormUpdateValue[]> {
+  const validateUpdateItem: IListItemFormUpdateValue[] = []
+
+  let Users: {id: number, loginName: string}[] = []
+  let Groups: {id: number, loginName: string}[] = []
+
+  await sp.web.siteUsers.select('*')().then((users) => {
+    Users = users.map((member) => {
+      return {id: member.Id, loginName: member.LoginName}
+    })
+  }).catch((error) => {
+    console.error(error)
+  })
+  
+  await sp.web.siteGroups.select('*')().then((groups) => {
+    Groups = groups.map((member) => {
+      return {id: member.Id, loginName: member.LoginName}
+    })
+  }).catch((error) => {
+    console.error(error)
+  })
+
+  const Members: {id: number, loginName: string}[] = Users.concat(Groups)
+  const getMember = (id: number): string => {
+    for (let index = 0; index < Members.length; index++) {
+      if (Members[index].id === id) {
+        return Members[index].loginName
+      }
+    }
+    return null
+  }
+
+  memberMultiFields.forEach((field) => {
+    const loginNames: string[] = []
+    field.fieldValue.forEach((id) => {
+      const loginName = getMember(id)
+      if (loginName) {
+        loginNames.push(loginName)
+      }
+    })
+    validateUpdateItem.push({FieldName: field.fieldName, FieldValue: JSON.stringify(loginNames.map((loginName) => {return {'Key': loginName}}))})
+  })
+  
+  return validateUpdateItem
 }

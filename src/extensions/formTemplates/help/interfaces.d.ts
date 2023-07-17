@@ -57,6 +57,6 @@ declare interface FormGroup {
 }
 
 interface IChoice {
-  value: string,
-  label: string,
+  value: string
+  label: string
 }
