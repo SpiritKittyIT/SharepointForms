@@ -73,7 +73,8 @@ export default class FormTemplatesFormCustomizer
     // person or group multi select fields need to be validated
     const fieldsToValidate: {fieldName: string, fieldValue: number[]}[] = []
 
-    const validatedItem = item
+    const validatedItem = {...item}
+    const etagNum: number = +etag.replace(/"/g, '')
     switch (this.displayMode) {
       case FormDisplayMode.New:
         await this._sp.web.lists.getById(this.context.list.guid.toString()).items.add(item)
@@ -99,6 +100,10 @@ export default class FormTemplatesFormCustomizer
           }).catch((err) => {
             throw err
           })
+
+          await new Promise(f => setTimeout(f, 300))
+
+          etag = `"${etagNum + 1}"`
         }
 
         fieldsToValidate.forEach((field) => {
@@ -106,7 +111,7 @@ export default class FormTemplatesFormCustomizer
           delete validatedItem[`${field.fieldName}StringId`]
         })
         
-        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, etag)
+        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, `"${etagNum + 1}"`)
         .then((result: IItemUpdateResult) => {return},
           (reason: any) => {
           this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
