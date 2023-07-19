@@ -73,6 +73,7 @@ export default class FormTemplatesFormCustomizer
     // person or group multi select fields need to be validated
     const fieldsToValidate: {fieldName: string, fieldValue: number[]}[] = []
 
+    const validatedItem = item
     switch (this.displayMode) {
       case FormDisplayMode.New:
         await this._sp.web.lists.getById(this.context.list.guid.toString()).items.add(item)
@@ -86,18 +87,8 @@ export default class FormTemplatesFormCustomizer
         })
         break
       case FormDisplayMode.Edit:
-        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(item, etag)
-        .then((result: IItemUpdateResult) => {return},
-          (reason: any) => {
-          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
-          throw new Error('Form submit error.')
-        }).catch((err) => {
-          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
-          throw err
-        })
-
         if (fieldsToValidate.length > 0) {
-          ValidateUpdateMemberMultiField(fieldsToValidate, this._sp)
+          await ValidateUpdateMemberMultiField(fieldsToValidate, this._sp)
           .then((validateFields) => {
             this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId)
             .validateUpdateListItem(validateFields)
@@ -109,6 +100,21 @@ export default class FormTemplatesFormCustomizer
             throw err
           })
         }
+
+        fieldsToValidate.forEach((field) => {
+          delete validatedItem[`${field.fieldName}Id`]
+          delete validatedItem[`${field.fieldName}StringId`]
+        })
+        
+        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, etag)
+        .then((result: IItemUpdateResult) => {return},
+          (reason: any) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw new Error('Form submit error.')
+        }).catch((err) => {
+          this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))
+          throw err
+        })
         break
     }
     // You MUST call this.formSaved() after you save the form.
