@@ -101,7 +101,7 @@ export default class FormTemplatesFormCustomizer
             throw err
           })
 
-          await new Promise(f => setTimeout(f, 300))
+          await new Promise(f => setTimeout(f, 300)).then((val) => {return}).catch((err) => {return})
 
           etag = `"${etagNum + 1}"`
         }
