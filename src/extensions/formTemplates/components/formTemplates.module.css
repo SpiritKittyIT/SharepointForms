@@ -23,4 +23,29 @@
   --gray8: rgb(58, 58, 60);
   --gray9: rgb(44, 44, 46);
   --black: rgb(28, 28, 30);
+
+  --transparent-red: rgba(255, 59, 48, 0.2);
+  --transparent-orange: rgba(255, 149, 0, 0.2);
+  --transparent-yellow: rgba(255, 204, 0, 0.2);
+  --transparent-green: rgba(52, 199, 89, 0.2);
+  --transparent-mint: rgba(0, 199, 190, 0.2);
+  --transparent-teal: rgba(48, 176, 199, 0.2);
+  --transparent-cyan: rgba(50, 173, 230, 0.2);
+  --transparent-blue: rgba(0, 122, 255, 0.2);
+  --transparent-indigo: rgba(88, 86, 214, 0.2);
+  --transparent-purple: rgba(175, 82, 222, 0.2);
+  --transparent-pink: rgba(255, 45, 85, 0.2);
+  --transparent-brown: rgba(162, 132, 94, 0.2);
+  --transparent-white: rgba(255, 255, 255, 0.2);
+  --transparent-gray0: rgba(242, 242, 247, 0.2);
+  --transparent-gray1: rgba(229, 229, 234, 0.2);
+  --transparent-gray2: rgba(209, 209, 214, 0.2);
+  --transparent-gray3: rgba(199, 199, 204, 0.2);
+  --transparent-gray4: rgba(174, 174, 178, 0.2);
+  --transparent-gray5: rgba(142, 142, 147, 0.2);
+  --transparent-gray6: rgba(99, 99, 102, 0.2);
+  --transparent-gray7: rgba(72, 72, 74, 0.2);
+  --transparent-gray8: rgba(58, 58, 60, 0.2);
+  --transparent-gray9: rgba(44, 44, 46, 0.2);
+  --transparent-black: rgba(28, 28, 30, 0.2);
 }
