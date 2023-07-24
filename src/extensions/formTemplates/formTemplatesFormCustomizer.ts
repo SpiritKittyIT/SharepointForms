@@ -72,6 +72,7 @@ export default class FormTemplatesFormCustomizer
 
     // person or group multi select fields need to be validated
     const fieldsToValidate: {fieldName: string, fieldValue: number[]}[] = []
+    const deleteFields: string[] = ['SharedWithUsersId']
 
     const validatedItem = {...item}
     let newEtag: string = etag
@@ -114,6 +115,10 @@ export default class FormTemplatesFormCustomizer
         fieldsToValidate.forEach((field) => {
           delete validatedItem[`${field.fieldName}Id`]
           delete validatedItem[`${field.fieldName}StringId`]
+        })
+
+        deleteFields.forEach((fieldName) => {
+          delete validatedItem[fieldName]
         })
         
         await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, newEtag)
