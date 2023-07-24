@@ -74,7 +74,7 @@ export default class FormTemplatesFormCustomizer
     const fieldsToValidate: {fieldName: string, fieldValue: number[]}[] = []
 
     const validatedItem = {...item}
-    const etagNum: number = +etag.replace(/"/g, '')
+    let newEtag: string = etag
     switch (this.displayMode) {
       case FormDisplayMode.New:
         await this._sp.web.lists.getById(this.context.list.guid.toString()).items.add(item)
@@ -101,9 +101,14 @@ export default class FormTemplatesFormCustomizer
             throw err
           })
 
-          await new Promise(f => setTimeout(f, 300)).then((val) => {return}).catch((err) => {return})
-
-          etag = `"${etagNum + 1}"`
+          while (newEtag === etag) {
+            await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(item.Id)().then((val) => {
+              newEtag = val['odata.etag']
+            }).catch((error) => {
+              console.error(error)
+            })
+            await new Promise((resolve, reject) => setTimeout(resolve, 100)).then((val) => {return}).catch((val) => {return})
+          }
         }
 
         fieldsToValidate.forEach((field) => {
@@ -111,7 +116,7 @@ export default class FormTemplatesFormCustomizer
           delete validatedItem[`${field.fieldName}StringId`]
         })
         
-        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, `"${etagNum + 1}"`)
+        await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId).update(validatedItem, newEtag)
         .then((result: IItemUpdateResult) => {return},
           (reason: any) => {
           this.domElement.querySelectorAll('input').forEach(el => el.removeAttribute('disabled'))

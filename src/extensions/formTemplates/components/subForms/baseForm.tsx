@@ -13,7 +13,7 @@ import '@pnp/sp/fields'
 import { GetColProps } from '../../help/helperFunctions'
 import { Button, Stack, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { TextCard } from '../cards'
-import { FormSubmit, IFormTemplatesProps, LocaleStrings } from '../formTemplates'
+import { IFormTemplatesProps, LocaleStrings } from '../formTemplates'
 import DevInfoButon from '../../help/devInfoButton'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -29,7 +29,7 @@ const BaseForm: FC<IFormTemplatesProps> = (props) => {
   
   //#region TEMPLATE_FUNCTIONS
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>): Promise<void> => {
-      await FormSubmit(props.sp, item, props.context.list.guid.toString(), props.displayMode, setErrorMessage, setShow, props.onSave)
+      await props.formSubmit(props.sp, item, props.context.list.guid.toString(), props.displayMode, setErrorMessage, setShow, props.onSave)
     }
   //#endregion
 
