@@ -91,8 +91,8 @@ export default class FormTemplatesFormCustomizer
       case FormDisplayMode.Edit:
         if (fieldsToValidate.length > 0) {
           await ValidateUpdateMemberMultiField(fieldsToValidate, this._sp)
-          .then((validateFields) => {
-            this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId)
+          .then(async (validateFields) => {
+            await this._sp.web.lists.getById(this.context.list.guid.toString()).items.getById(this.context.itemId)
             .validateUpdateListItem(validateFields)
             .then((val) => {return})
             .catch((err) => {
