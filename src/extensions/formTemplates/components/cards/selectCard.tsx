@@ -55,7 +55,6 @@ const SelectCard: React.FC<ISelectCard> = ({id, title, displayMode, required, it
               required={required}
               error={error}
               helperText={errorMessage}
-              InputLabelProps={{ shrink: itemHandle.value ? true : false }}
             />
           }
         />
