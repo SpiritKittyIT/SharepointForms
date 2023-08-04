@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export function StringValSet(value: string, valueName: string, itemHandle: IHandle<Record<string, any>>): void {
   itemHandle.setValue({
     ...itemHandle.value,

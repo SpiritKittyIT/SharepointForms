@@ -21,6 +21,8 @@ import FormTemplates, { IFormTemplatesProps } from './components/formTemplates'
 import { IItemUpdateResult } from '@pnp/sp/items'
 import { ValidateUpdateMemberMultiField } from './help/helperFunctions'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * If your form customizer uses the ClientSideComponentProperties JSON input,
  * it will be deserialized into the BaseExtension.properties object.
